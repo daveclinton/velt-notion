@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearch } from "@/hooks/use-search";
-import { getDocuments } from "@/lib/data";
+import { useDocuments } from "@/lib/document-store";
 import { useAuthStore } from "@/lib/auth-store";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -18,19 +18,14 @@ import { File } from "lucide-react";
 export const SearchCommand = () => {
   const { user } = useAuthStore();
   const router = useRouter();
-  const [documents, setDocuments] = useState<any[]>([]);
   const [isMounted, setIsMounted] = useState(false);
+
+  // Get documents using Zustand store
+  const documents = useDocuments(user?.id || "");
 
   const toggle = useSearch((store) => store.toggle);
   const isOpen = useSearch((store) => store.isOpen);
   const onClose = useSearch((store) => store.onClose);
-
-  useEffect(() => {
-    if (user) {
-      const docs = getDocuments(user.id);
-      setDocuments(docs);
-    }
-  }, [user]);
 
   useEffect(() => {
     setIsMounted(true);

@@ -2,48 +2,28 @@
 
 import { Cover } from "@/components/cover";
 import dynamic from "next/dynamic";
-import { useMemo, useEffect, useState, useCallback } from "react";
+import { useMemo, useEffect, useCallback } from "react";
 import { Toolbar } from "@/components/toolbar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useParams, useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/auth-store";
 import { toast } from "sonner";
 import React from "react";
-import { Document, getDocumentById, updateDocument } from "@/lib/data";
+import { useDocument, useDocumentActions } from "@/lib/document-store";
 
 const DocumentIdPage = () => {
   const params = useParams<{ documentId: string }>();
   const router = useRouter();
   const { user, isAuthenticated } = useAuthStore();
+  const { updateDocument } = useDocumentActions();
 
-  const [document, setDocument] = useState<Document | null | undefined>(
-    undefined
-  );
-  const [isLoading, setIsLoading] = useState(true);
+  // Get document from Zustand store
+  const document = useDocument(params.documentId);
 
   const Editor = useMemo(
     () => dynamic(() => import("@/components/editor"), { ssr: false }),
     []
   );
-
-  useEffect(() => {
-    if (!params.documentId) {
-      setDocument(null);
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const doc = getDocumentById(params.documentId);
-      setDocument(doc);
-    } catch (error) {
-      console.error("Failed to load document:", error);
-      setDocument(null);
-      toast.error("Failed to load document");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [params.documentId]);
 
   useEffect(() => {
     if (
@@ -69,9 +49,7 @@ const DocumentIdPage = () => {
       if (document && user && document.userId === user.id) {
         try {
           const updatedDoc = updateDocument(params.documentId, { content });
-          if (updatedDoc) {
-            setDocument(updatedDoc);
-          } else {
+          if (!updatedDoc) {
             toast.error("Failed to update document");
           }
         } catch (error) {
@@ -80,10 +58,11 @@ const DocumentIdPage = () => {
         }
       }
     },
-    [params.documentId, document, user]
+    [params.documentId, document, user, updateDocument]
   );
 
-  if (isLoading || document === undefined) {
+  // Show loading skeleton while document is being fetched
+  if (document === undefined) {
     return (
       <div>
         <Cover.Skeleton />
@@ -99,6 +78,7 @@ const DocumentIdPage = () => {
     );
   }
 
+  // Document not found
   if (document === null) {
     return (
       <div className="h-full flex flex-col items-center justify-center space-y-4">
