@@ -1,15 +1,15 @@
 "use client";
+
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ImageIcon, X } from "lucide-react";
 import { useCoverImage } from "@/hooks/use-cover-image";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { updateDocument } from "@/lib/data";
 import { useParams } from "next/navigation";
-import { Id } from "@/convex/_generated/dataModel";
 import { useEdgeStore } from "@/lib/edgestore";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 interface CoverImageProps {
   url?: string;
@@ -19,18 +19,27 @@ interface CoverImageProps {
 export const Cover = ({ url, preview }: CoverImageProps) => {
   const params = useParams();
   const coverImage = useCoverImage();
-  const removeCoverImage = useMutation(api.documents.removeCoverImage);
   const { edgestore } = useEdgeStore();
 
   const onRemove = async () => {
     if (url) {
-      await edgestore.publicFiles.delete({
-        url: url,
-      });
+      try {
+        await edgestore.publicFiles.delete({
+          url: url,
+        });
+        const updatedDoc = updateDocument(params.documentId as string, {
+          coverImage: undefined,
+        });
+
+        if (!updatedDoc) {
+          throw new Error("Failed to remove cover image");
+        }
+
+        toast.success("Cover image removed!");
+      } catch (error) {
+        toast.error("Failed to remove cover image.");
+      }
     }
-    removeCoverImage({
-      id: params.documentId as Id<"documents">,
-    });
   };
 
   return (
@@ -46,7 +55,7 @@ export const Cover = ({ url, preview }: CoverImageProps) => {
         <div className="opacity-100 group-hover:opacity-100 absolute bottom-5 right-5 flex items-center gap-x-2">
           <Button
             onClick={() => coverImage.onReplace(url)}
-            className="to-muted-foreground text-xs"
+            className="text-muted-foreground text-xs"
             variant="outline"
             size="sm"
           >
@@ -55,7 +64,7 @@ export const Cover = ({ url, preview }: CoverImageProps) => {
           </Button>
           <Button
             onClick={onRemove}
-            className="to-muted-foreground text-xs"
+            className="text-muted-foreground text-xs"
             variant="outline"
             size="sm"
           >

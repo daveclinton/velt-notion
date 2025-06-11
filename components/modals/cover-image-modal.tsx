@@ -5,15 +5,13 @@ import { useCoverImage } from "@/hooks/use-cover-image";
 import { SingleImageDropzone } from "@/components/single-image-dropzone";
 import { useState } from "react";
 import { useEdgeStore } from "@/lib/edgestore";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { updateDocument } from "@/lib/data";
 import { useParams } from "next/navigation";
-import { Id } from "@/convex/_generated/dataModel";
+import { toast } from "sonner";
 
 export const CoverImageModal = () => {
   const params = useParams();
   const { edgestore } = useEdgeStore();
-  const update = useMutation(api.documents.update);
   const coverImage = useCoverImage();
   const [file, setFile] = useState<File>();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,18 +27,28 @@ export const CoverImageModal = () => {
       setIsSubmitting(true);
       setFile(file);
 
-      const res = await edgestore.publicFiles.upload({
-        file,
-        options: {
-          replaceTargetUrl: coverImage.url,
-        },
-      });
-      console.log("upload res: -", res);
-      await update({
-        id: params.documentId as Id<"documents">,
-        coverImage: res.url,
-      });
-      onClose();
+      try {
+        const res = await edgestore.publicFiles.upload({
+          file,
+          options: {
+            replaceTargetUrl: coverImage.url,
+          },
+        });
+
+        const updatedDoc = updateDocument(params.documentId as string, {
+          coverImage: res.url,
+        });
+
+        if (!updatedDoc) {
+          throw new Error("Failed to update document");
+        }
+
+        toast.success("Cover image updated!");
+        onClose();
+      } catch (error) {
+        toast.error("Failed to update cover image.");
+        setIsSubmitting(false);
+      }
     }
   };
 

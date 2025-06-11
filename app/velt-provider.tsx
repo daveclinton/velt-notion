@@ -1,6 +1,7 @@
 "use client";
+
 import React, { ReactNode } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useAuthStore } from "@/lib/auth-store";
 import { useIdentify } from "@veltdev/react";
 import {
   VeltProvider,
@@ -20,17 +21,15 @@ export function VeltWrapper({ children }: { children: ReactNode }) {
 }
 
 function VeltAuthHandler() {
-  const { user, isLoaded } = useUser();
+  const { user, isLoading } = useAuthStore();
 
   const veltUser =
-    isLoaded && user
+    !isLoading && user
       ? {
           userId: user.id,
-          organizationId:
-            user.organizationMemberships?.[0]?.organization?.id ||
-            "default-org",
-          name: user.fullName || user.firstName || "Anonymous User",
-          email: user.primaryEmailAddress?.emailAddress || "",
+          organizationId: "default-org",
+          name: user.name || "Anonymous User",
+          email: user.email || "",
           photoUrl: user.imageUrl || "",
           color: generateColorFromUserId(user.id),
         }

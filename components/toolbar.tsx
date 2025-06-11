@@ -1,27 +1,38 @@
+// app/(main)/_components/toolbar.tsx
 "use client";
 
 import { useCoverImage } from "@/hooks/use-cover-image";
-import { Doc } from "@/convex/_generated/dataModel";
+import { updateDocument } from "@/lib/data";
 import { IconPicker } from "./icon-picker";
 import { Button } from "./ui/button";
 import { ImageIcon, Smile, X } from "lucide-react";
 import { ElementRef, useRef, useState } from "react";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import TextareaAutosize from "react-textarea-autosize";
+import { toast } from "sonner";
 
 interface ToolbarProps {
-  initialData: Doc<"documents">;
+  initialData: Document;
   preview?: boolean;
+}
+
+interface Document {
+  id: string;
+  title: string;
+  content: string;
+  userId: string;
+  isPublished: boolean;
+  isArchived: boolean;
+  createdAt: string;
+  updatedAt: string;
+  coverImage?: string;
+  icon?: string;
+  parentDocumentId?: string;
 }
 
 export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
   const inputRef = useRef<ElementRef<"textarea">>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialData.title);
-
-  const update = useMutation(api.documents.update);
-  const removeIcon = useMutation(api.documents.removeIcon);
 
   const coverImage = useCoverImage();
 
@@ -39,10 +50,13 @@ export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
 
   const onInput = (value: string) => {
     setValue(value);
-    update({
-      id: initialData._id,
+    const updatedDoc = updateDocument(initialData.id, {
       title: value || "Untitled",
     });
+
+    if (!updatedDoc) {
+      toast.error("Failed to update title.");
+    }
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -53,16 +67,23 @@ export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
   };
 
   const onIconSelect = (icon: string) => {
-    update({
-      id: initialData._id,
+    const updatedDoc = updateDocument(initialData.id, {
       icon,
     });
+
+    if (!updatedDoc) {
+      toast.error("Failed to update icon.");
+    }
   };
 
   const onRemoveIcon = () => {
-    removeIcon({
-      id: initialData._id,
+    const updatedDoc = updateDocument(initialData.id, {
+      icon: undefined,
     });
+
+    if (!updatedDoc) {
+      toast.error("Failed to remove icon.");
+    }
   };
 
   return (
@@ -91,7 +112,7 @@ export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
         {!initialData.icon && !preview && (
           <IconPicker asChild onChange={onIconSelect}>
             <Button
-              className="to-muted-foreground text-xs"
+              className="text-muted-foreground text-xs"
               variant="outline"
               size="sm"
             >
