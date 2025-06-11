@@ -28,8 +28,7 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
     documentId: params.documentId,
   });
 
-  // Always call useSetDocument, but use params.documentId as fallback
-  useSetDocument(document?._id || params.documentId, {
+  useSetDocument(document?._id || "no_document", {
     documentName: document?.title || "Loading...",
   });
 
