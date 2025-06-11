@@ -2,37 +2,29 @@
 
 import { Cover } from "@/components/cover";
 import dynamic from "next/dynamic";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import { Toolbar } from "@/components/toolbar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useParams } from "next/navigation";
-import { getDocumentById, updateDocument } from "@/lib/data";
+import { useDocument, useDocumentActions } from "@/lib/document-store";
 
 const DocumentIdPage = () => {
   const params = useParams<{ documentId: string }>();
-  const [document, setDocument] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const document = useDocument(params.documentId);
+  const { updateDocument } = useDocumentActions();
 
   const Editor = useMemo(
     () => dynamic(() => import("@/components/editor"), { ssr: false }),
     []
   );
 
-  // Fetch document using mock utility
-  useEffect(() => {
-    const doc = getDocumentById(params.documentId);
-    setDocument(doc);
-    setLoading(false);
-  }, [params.documentId]);
-
-  // Update document content using mock utility
   const onChange = (content: string) => {
     if (document) {
       updateDocument(params.documentId, { content });
     }
   };
 
-  if (loading) {
+  if (document === undefined) {
     return (
       <div>
         <Cover.Skeleton />
@@ -48,7 +40,7 @@ const DocumentIdPage = () => {
     );
   }
 
-  if (!document) {
+  if (document === null || !document) {
     return <div>Not found</div>;
   }
 

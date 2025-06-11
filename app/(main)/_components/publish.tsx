@@ -2,7 +2,7 @@
 
 import { useOrigin } from "@/hooks/use-origin";
 import { useAuthStore } from "@/lib/auth-store";
-import { publishDocument, updateDocument } from "@/lib/data";
+import { useDocumentActions, Document } from "@/lib/document-store";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -17,25 +17,12 @@ interface PublishProps {
   initialData: Document;
 }
 
-interface Document {
-  id: string;
-  title: string;
-  content: string;
-  userId: string;
-  isPublished: boolean;
-  isArchived: boolean;
-  createdAt: string;
-  updatedAt: string;
-  coverImage?: string;
-  icon?: string;
-  parentDocumentId?: string;
-}
-
 export const Publish = ({ initialData }: PublishProps) => {
   const origin = useOrigin();
   const { user } = useAuthStore();
   const [copied, setCopied] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { publishDocument, updateDocument } = useDocumentActions();
 
   const url = `${origin}/preview/${initialData.id}`;
 

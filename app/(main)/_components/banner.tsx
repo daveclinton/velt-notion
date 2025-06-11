@@ -2,7 +2,7 @@
 
 import { ConfirmModal } from "@/components/modals/confirm-modal";
 import { Button } from "@/components/ui/button";
-import { deleteDocument, restoreDocument } from "@/lib/data";
+import { useDocumentActions } from "@/lib/document-store";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -12,6 +12,8 @@ interface BannerProps {
 
 export const Banner = ({ documentId }: BannerProps) => {
   const router = useRouter();
+  const { deleteDocument, restoreDocument } = useDocumentActions();
+
   const onRemove = () => {
     const success = deleteDocument(documentId);
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCoverImage } from "@/hooks/use-cover-image";
-import { updateDocument } from "@/lib/data";
+import { useDocumentActions, Document } from "@/lib/document-store";
 import { IconPicker } from "./icon-picker";
 import { Button } from "./ui/button";
 import { ImageIcon, Smile, X } from "lucide-react";
@@ -14,26 +14,13 @@ interface ToolbarProps {
   preview?: boolean;
 }
 
-interface Document {
-  id: string;
-  title: string;
-  content: string;
-  userId: string;
-  isPublished: boolean;
-  isArchived: boolean;
-  createdAt: string;
-  updatedAt: string;
-  coverImage?: string;
-  icon?: string;
-  parentDocumentId?: string;
-}
-
 export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
   const inputRef = useRef<ElementRef<"textarea">>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialData.title);
 
   const coverImage = useCoverImage();
+  const { updateDocument } = useDocumentActions();
 
   const enableInput = () => {
     if (preview) return;

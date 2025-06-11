@@ -1,8 +1,7 @@
-// app/(main)/_components/menu.tsx
 "use client";
 
 import { useRouter } from "next/navigation";
-import { archiveDocument } from "@/lib/data";
+import { useDocumentActions } from "@/lib/document-store";
 import { useAuthStore } from "@/lib/auth-store";
 import {
   DropdownMenu,
@@ -23,6 +22,7 @@ interface MenuProps {
 export const Menu = ({ documentId }: MenuProps) => {
   const router = useRouter();
   const { user } = useAuthStore();
+  const { archiveDocument } = useDocumentActions();
 
   const onArchive = () => {
     const success = archiveDocument(documentId);

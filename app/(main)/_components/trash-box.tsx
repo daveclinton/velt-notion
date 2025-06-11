@@ -3,7 +3,7 @@
 import { ConfirmModal } from "@/components/modals/confirm-modal";
 import { Spinner } from "@/components/spinner";
 import { Input } from "@/components/ui/input";
-import { getDocuments, restoreDocument, deleteDocument } from "@/lib/data";
+import { useDocumentStore, useDocumentActions } from "@/lib/document-store";
 import { useAuthStore } from "@/lib/auth-store";
 import { Search, Trash, Undo } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -15,6 +15,14 @@ export const TrashBox = () => {
   const params = useParams();
   const { user } = useAuthStore();
   const [search, setSearch] = useState("");
+  const { restoreDocument, deleteDocument } = useDocumentActions();
+
+  // Get archived documents from Zustand store
+  const documents = useDocumentStore((state) => {
+    if (!user) return [];
+    const allDocs = state.documents.filter((doc) => doc.userId === user.id);
+    return allDocs.filter((doc) => doc.isArchived);
+  });
 
   if (!user) {
     return (
@@ -24,7 +32,6 @@ export const TrashBox = () => {
     );
   }
 
-  const documents = getDocuments(user.id).filter((doc) => doc.isArchived);
   const filteredDocuments = documents?.filter((document) =>
     document.title.toLowerCase().includes(search.toLowerCase())
   );

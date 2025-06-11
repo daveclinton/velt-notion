@@ -15,7 +15,7 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import { ElementRef, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { useAuthStore } from "@/lib/auth-store";
-import { createDocument } from "@/lib/data";
+import { useDocumentActions } from "@/lib/document-store";
 import { UserItem } from "./user-item";
 import { Item } from "./item";
 import { toast } from "sonner";
@@ -39,6 +39,7 @@ export const Navigation = () => {
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { user } = useAuthStore();
+  const { createDocument } = useDocumentActions();
 
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<ElementRef<"aside">>(null);

@@ -4,28 +4,18 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/lib/auth-store";
-import { createDocument, Document, getDocuments } from "@/lib/data";
+import { useDocuments, useDocumentActions } from "@/lib/document-store";
 
 const DocumentsPage = () => {
   const router = useRouter();
   const { user } = useAuthStore();
-  const [documents, setDocuments] = useState<Document[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (user?.id) {
-      try {
-        const userDocs = getDocuments(user.id);
-        setDocuments(userDocs);
-      } catch (error) {
-        console.error("Failed to load documents:", error);
-        toast.error("Failed to load documents");
-      }
-    }
-  }, [user?.id]);
+  const documents = useDocuments(user?.id || "");
+  const { createDocument } = useDocumentActions();
 
   const onCreate = async () => {
     if (!user?.id) return;
@@ -36,7 +26,6 @@ const DocumentsPage = () => {
       const newDocument = createDocument(user.id, "Untitled");
 
       if (newDocument) {
-        setDocuments((prev) => [...prev, newDocument]);
         toast.success("New note created!");
         router.push(`/documents/${newDocument.id}`);
       } else {

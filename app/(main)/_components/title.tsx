@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { updateDocument } from "@/lib/data";
+import { useDocumentActions, Document } from "@/lib/document-store";
 import { useAuthStore } from "@/lib/auth-store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,23 +12,10 @@ interface TitleProps {
   initialData: Document;
 }
 
-interface Document {
-  id: string;
-  title: string;
-  content: string;
-  userId: string;
-  isPublished: boolean;
-  isArchived: boolean;
-  createdAt: string;
-  updatedAt: string;
-  coverImage?: string;
-  icon?: string;
-  parentDocumentId?: string;
-}
-
 export const Title = ({ initialData }: TitleProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuthStore();
+  const { updateDocument } = useDocumentActions();
 
   const [title, setTitle] = useState(initialData.title || "Untitled");
   const [isEditing, setIsEditing] = useState(false);

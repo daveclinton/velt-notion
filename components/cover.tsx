@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ImageIcon, X } from "lucide-react";
 import { useCoverImage } from "@/hooks/use-cover-image";
-import { updateDocument } from "@/lib/data";
+import { useDocumentActions } from "@/lib/document-store";
 import { useParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -18,6 +18,7 @@ interface CoverImageProps {
 export const Cover = ({ url, preview }: CoverImageProps) => {
   const params = useParams();
   const coverImage = useCoverImage();
+  const { updateDocument } = useDocumentActions();
 
   const onRemove = async () => {
     if (url) {

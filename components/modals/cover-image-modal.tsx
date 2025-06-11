@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { useCoverImage } from "@/hooks/use-cover-image";
 import { SingleImageDropzone } from "@/components/single-image-dropzone";
 import { useState } from "react";
-import { updateDocument } from "@/lib/data";
+import { useDocumentActions } from "@/lib/document-store";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
@@ -13,6 +13,8 @@ export const CoverImageModal = () => {
   const coverImage = useCoverImage();
   const [file, setFile] = useState<File>();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { updateDocument } = useDocumentActions();
 
   const onClose = () => {
     setFile(undefined);

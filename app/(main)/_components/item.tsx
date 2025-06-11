@@ -4,7 +4,7 @@
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { archiveDocument, createDocument } from "@/lib/data";
+import { useDocumentActions } from "@/lib/document-store";
 import { useAuthStore } from "@/lib/auth-store";
 import {
   ChevronDown,
@@ -50,6 +50,7 @@ export const Item = ({
 }: ItemProps) => {
   const { user } = useAuthStore();
   const router = useRouter();
+  const { archiveDocument, createDocument } = useDocumentActions();
 
   const onArchive = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     event.stopPropagation();

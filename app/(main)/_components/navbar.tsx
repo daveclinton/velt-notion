@@ -1,12 +1,11 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useState, useEffect } from "react";
 import { MenuIcon } from "lucide-react";
 import { Title } from "./title";
 import { Menu } from "./menu";
 import { Publish } from "./publish";
-import { getDocumentById } from "@/lib/data";
+import { useDocument } from "@/lib/document-store";
 import {
   VeltCommentTool,
   VeltPresence,
@@ -21,16 +20,10 @@ interface NavbarProps {
 
 export const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
   const params = useParams<{ documentId: string }>();
-  const [document, setDocument] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const document = useDocument(params.documentId);
 
-  useEffect(() => {
-    const doc = getDocumentById(params.documentId);
-    setDocument(doc);
-    setLoading(false);
-  }, [params.documentId]);
-
-  if (loading) {
+  // Show loading skeleton while document is being fetched
+  if (document === undefined) {
     return (
       <nav
         className="bg-background dark:bg-[#1F1F1F] px-3 py-2 w-full
@@ -44,6 +37,7 @@ export const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
     );
   }
 
+  // Document not found
   if (!document) {
     return null;
   }
