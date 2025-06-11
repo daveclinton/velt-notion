@@ -9,7 +9,6 @@ import { toast } from "sonner";
 
 export default function SignInPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { signIn } = useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +19,6 @@ export default function SignInPage() {
     setIsLoading(true);
     try {
       await signIn(email, password);
-      const redirect = searchParams.get("redirect") || "/documents";
       router.push("/documents");
     } catch (error) {
       toast.error("Invalid credentials");
