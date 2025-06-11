@@ -19,6 +19,7 @@ const DocumentIdPage = () => {
   );
 
   const onChange = (content: string) => {
+    console.log("documentttts", document);
     if (document) {
       updateDocument(params.documentId, { content });
     }

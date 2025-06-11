@@ -23,9 +23,26 @@ const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
   };
 
   const editor: BlockNoteEditor = useCreateBlockNote({
-    initialContent: initialContent ? JSON.parse(initialContent) : undefined,
+    initialContent: (() => {
+      if (!initialContent) return undefined;
+      try {
+        return JSON.parse(initialContent);
+      } catch (error) {
+        console.error("Failed to parse initial content:", error);
+        return undefined;
+      }
+    })(),
     uploadFile: handleUpload,
   });
+
+  const handleChange = () => {
+    try {
+      const content = JSON.stringify(editor.document, null, 2);
+      onChange(content);
+    } catch (error) {
+      console.error("Failed to stringify content:", error);
+    }
+  };
 
   return (
     <div>
@@ -33,6 +50,7 @@ const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
         editor={editor}
         editable={editable}
         theme={resolvedTheme === "dark" ? "dark" : "light"}
+        onChange={handleChange}
       />
     </div>
   );
