@@ -7,6 +7,7 @@ import { Toolbar } from "@/components/toolbar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useParams } from "next/navigation";
 import { useDocument, useDocumentActions } from "@/lib/document-store";
+import { useSetDocument } from "@veltdev/react";
 
 const DocumentIdPage = () => {
   const params = useParams<{ documentId: string }>();
@@ -19,11 +20,14 @@ const DocumentIdPage = () => {
   );
 
   const onChange = (content: string) => {
-    console.log("documentttts", document);
     if (document) {
       updateDocument(params.documentId, { content });
     }
   };
+
+  useSetDocument(params?.documentId, {
+    documentName: document?.title || "Untitled",
+  });
 
   if (document === undefined) {
     return (
