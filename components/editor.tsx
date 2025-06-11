@@ -4,10 +4,26 @@ import React, { useEffect, useState, useCallback } from "react";
 import "@blocknote/core/fonts/inter.css";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
-import { useCreateBlockNote } from "@blocknote/react";
+import {
+  BasicTextStyleButton,
+  BlockTypeSelect,
+  ColorStyleButton,
+  CreateLinkButton,
+  FileCaptionButton,
+  FileReplaceButton,
+  FormattingToolbar,
+  FormattingToolbarController,
+  TextAlignButton,
+  useCreateBlockNote,
+  AddCommentButton,
+} from "@blocknote/react";
 import { useTheme } from "next-themes";
 import { BlockNoteEditor } from "@blocknote/core";
-import { useVeltClient } from "@veltdev/react";
+import {
+  useAddCommentAnnotation,
+  useVeltInitState,
+  useCommentUtils,
+} from "@veltdev/react";
 import { MessageCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -18,16 +34,16 @@ interface EditorProps {
 }
 
 function useVeltBlockNoteComments(editor: BlockNoteEditor | null) {
-  const veltClient = useVeltClient();
-  console.log("Velt Client Object:", veltClient);
-  console.log("documet id", veltClient.client.getDocumentId());
+  const { addCommentAnnotation } = useAddCommentAnnotation();
+  const isVeltInitialized = useVeltInitState();
+  const commentUtils = useCommentUtils();
+
   const [selectedText, setSelectedText] = useState("");
   const [showCommentButton, setShowCommentButton] = useState(false);
   const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 });
 
-  // Handle text selection in BlockNote
   useEffect(() => {
-    if (!editor) return;
+    if (!editor || !isVeltInitialized) return;
 
     const handleSelectionChange = () => {
       try {
@@ -81,25 +97,28 @@ function useVeltBlockNoteComments(editor: BlockNoteEditor | null) {
       document.removeEventListener("selectionchange", handleSelectionChange);
       document.removeEventListener("click", handleDocumentClick);
     };
-  }, [editor]);
+  }, [editor, isVeltInitialized]);
 
   const addComment = useCallback(async () => {
-    if (!selectedText || !veltClient) return;
+    if (!selectedText || !isVeltInitialized) return;
 
     try {
-      const locationId = `comment-${Date.now()}-${Math.random()
+      const annotationId = `comment-${Date.now()}-${Math.random()
         .toString(36)
         .substr(2, 9)}`;
+
       const context = {
         selectedText: selectedText,
         timestamp: Date.now(),
         selectionLength: selectedText.length,
       };
 
-      await veltClient.client.addCommentAnnotation({
-        annotationId: locationId,
+      // Use the hook instead of direct client method
+      await addCommentAnnotation({
+        annotationId,
         context,
       });
+
       window.getSelection()?.removeAllRanges();
       setSelectedText("");
       setShowCommentButton(false);
@@ -111,7 +130,7 @@ function useVeltBlockNoteComments(editor: BlockNoteEditor | null) {
     } catch (error) {
       console.error("Error adding comment:", error);
     }
-  }, [selectedText, veltClient]);
+  }, [selectedText, isVeltInitialized, addCommentAnnotation]);
 
   const hideCommentButton = useCallback(() => {
     setShowCommentButton(false);
@@ -142,6 +161,8 @@ function useVeltBlockNoteComments(editor: BlockNoteEditor | null) {
     buttonPosition,
     addComment,
     hideCommentButton,
+    isVeltInitialized,
+    commentUtils, // You can use this for additional comment utilities if needed
   };
 }
 
@@ -220,32 +241,83 @@ const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
     }
   };
 
-  // Use Velt commenting integration
-  const {
-    selectedText,
-    showCommentButton,
-    buttonPosition,
-    addComment,
-    hideCommentButton,
-  } = useVeltBlockNoteComments(editor);
+  const { isVeltInitialized } = useVeltBlockNoteComments(editor);
+
+  if (!isVeltInitialized) {
+    return (
+      <div className="relative">
+        <BlockNoteView
+          editor={editor}
+          editable={editable}
+          theme={resolvedTheme === "dark" ? "dark" : "light"}
+          onChange={handleChange}
+        />
+        <div className="absolute top-2 right-2 text-sm text-gray-500">
+          Initializing comments...
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="relative">
-      <BlockNoteView
-        editor={editor}
-        editable={editable}
-        theme={resolvedTheme === "dark" ? "dark" : "light"}
-        onChange={handleChange}
-      />
+    <BlockNoteView
+      editor={editor}
+      editable={editable}
+      theme={resolvedTheme === "dark" ? "dark" : "light"}
+      onChange={handleChange}
+      formattingToolbar={false}
+      comments
+    >
+      <FormattingToolbarController
+        formattingToolbar={() => (
+          <FormattingToolbar>
+            <BlockTypeSelect key={"blockTypeSelect"} />
+            <FileCaptionButton key={"fileCaptionButton"} />
+            <FileReplaceButton key={"replaceFileButton"} />
 
-      <FloatingCommentButton
-        show={showCommentButton}
-        position={buttonPosition}
-        onAddComment={addComment}
-        onCancel={hideCommentButton}
-        selectedText={selectedText}
+            <BasicTextStyleButton
+              basicTextStyle={"bold"}
+              key={"boldStyleButton"}
+            />
+            <BasicTextStyleButton
+              basicTextStyle={"italic"}
+              key={"italicStyleButton"}
+            />
+            <BasicTextStyleButton
+              basicTextStyle={"underline"}
+              key={"underlineStyleButton"}
+            />
+            <BasicTextStyleButton
+              basicTextStyle={"strike"}
+              key={"strikeStyleButton"}
+            />
+
+            <BasicTextStyleButton
+              key={"codeStyleButton"}
+              basicTextStyle={"code"}
+            />
+
+            <TextAlignButton
+              textAlignment={"left"}
+              key={"textAlignLeftButton"}
+            />
+            <TextAlignButton
+              textAlignment={"center"}
+              key={"textAlignCenterButton"}
+            />
+            <TextAlignButton
+              textAlignment={"right"}
+              key={"textAlignRightButton"}
+            />
+
+            <ColorStyleButton key={"colorStyleButton"} />
+
+            <CreateLinkButton key={"createLinkButton"} />
+            <AddCommentButton key={"addCommentButton"} />
+          </FormattingToolbar>
+        )}
       />
-    </div>
+    </BlockNoteView>
   );
 };
 
