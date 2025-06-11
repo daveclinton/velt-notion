@@ -9,7 +9,6 @@ import Link from "next/link";
 
 const Heading = () => {
   const { isAuthenticated, isLoading } = useAuthStore();
-  const user = getCurrentUser();
 
   return (
     <div className="max-w-3xl space-y-4">

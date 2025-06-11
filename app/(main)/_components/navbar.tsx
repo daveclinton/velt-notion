@@ -6,11 +6,7 @@ import { Title } from "./title";
 import { Menu } from "./menu";
 import { Publish } from "./publish";
 import { useDocument } from "@/lib/document-store";
-import {
-  VeltCommentTool,
-  VeltPresence,
-  VeltSidebarButton,
-} from "@veltdev/react";
+import { VeltPresence, VeltSidebarButton } from "@veltdev/react";
 import { Banner } from "./banner";
 
 interface NavbarProps {
@@ -22,7 +18,6 @@ export const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
   const params = useParams<{ documentId: string }>();
   const document = useDocument(params.documentId);
 
-  // Show loading skeleton while document is being fetched
   if (document === undefined) {
     return (
       <nav
@@ -58,7 +53,6 @@ export const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
             <VeltPresence />
             <div className="toolbar flex">
               <VeltSidebarButton />
-              <VeltCommentTool />
             </div>
             <Publish initialData={document} />
             <Menu documentId={document.id} />
