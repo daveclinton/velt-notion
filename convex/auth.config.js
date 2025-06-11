@@ -1,8 +1,8 @@
 export default {
-    providers: [
-        {
-            domain: "https://meet-polecat-10.clerk.accounts.dev",
-            applicationID: "convex"
-        }
-    ]
-}
+  providers: [
+    {
+      domain: "https://choice-eagle-35.clerk.accounts.dev",
+      applicationID: "convex",
+    },
+  ],
+};
