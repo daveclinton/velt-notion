@@ -10,6 +10,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
 import React from "react";
+import { useSetDocument } from "@veltdev/react";
 
 interface DocumentIdPageProps {
   params: {
@@ -25,6 +26,11 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
 
   const document = useQuery(api.documents.getById, {
     documentId: params.documentId,
+  });
+
+  // Always call useSetDocument, but use params.documentId as fallback
+  useSetDocument(document?._id || params.documentId, {
+    documentName: document?.title || "Loading...",
   });
 
   const update = useMutation(api.documents.update);

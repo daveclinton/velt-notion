@@ -12,7 +12,7 @@ export function VeltWrapper({ children }: { children: ReactNode }) {
   return (
     <VeltProvider apiKey={process.env.NEXT_PUBLIC_VELT_KEY || ""}>
       <VeltAuthHandler />
-      <VeltComments textMode={false} darkMode={true} />
+      <VeltComments textMode={false} />
       <VeltCommentsSidebar />
       {children}
     </VeltProvider>
@@ -22,7 +22,6 @@ export function VeltWrapper({ children }: { children: ReactNode }) {
 function VeltAuthHandler() {
   const { user, isLoaded } = useUser();
 
-  // Always prepare a user object - use real data when available, dummy data when not
   const veltUser =
     isLoaded && user
       ? {
@@ -44,13 +43,11 @@ function VeltAuthHandler() {
           color: "#808080",
         };
 
-  // Always call useIdentify - no conditional calls
   useIdentify(veltUser);
 
   return null;
 }
 
-// Helper function to generate consistent colors for users
 function generateColorFromUserId(userId: string): string {
   const colors = [
     "#FF6B6B",
