@@ -1,6 +1,5 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useUser } from "@clerk/clerk-react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import {
@@ -15,6 +14,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Trash } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useUser } from "@clerk/nextjs";
 
 interface MenuProps {
   documentId: Id<"documents">;
