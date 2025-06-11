@@ -7,21 +7,26 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { getCurrentUser, isAuthenticated, signOut } from "@/lib/auth";
+import { useEffect } from "react";
+import { useAuthStore } from "@/lib/auth-store";
 
 const Navbar = () => {
   const scrolled = useScrollTop();
-  const user = getCurrentUser();
-  const isAuth = isAuthenticated();
   const router = useRouter();
-  const [isSigningOut, setIsSigningOut] = useState(false);
+  const { user, isAuthenticated, isLoading, logout, initialize } =
+    useAuthStore();
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
 
   const handleSignOut = async () => {
-    setIsSigningOut(true);
-    await signOut();
-    router.push("/");
-    setIsSigningOut(false);
+    try {
+      await logout();
+      router.push("/");
+    } catch (error) {
+      console.error("Sign out error:", error);
+    }
   };
 
   return (
@@ -33,33 +38,33 @@ const Navbar = () => {
     >
       <Logo />
       <div className="md:ml-auto md:justify-end justify-between w-full flex items-center gap-x-2">
-        {!isAuth && (
+        {!isAuthenticated && (
           <>
             <Button
               size="sm"
               onClick={() => router.push("/sign-in")}
-              disabled={isSigningOut}
+              disabled={isLoading}
             >
               Login
             </Button>
             <Button
               size="sm"
-              onClick={() => router.push("/sign-in")}
-              disabled={isSigningOut}
+              onClick={() => router.push("/sign-up")}
+              disabled={isLoading}
             >
               Get Notion free
             </Button>
           </>
         )}
-        {isAuth && (
+        {isAuthenticated && (
           <>
-            <Button variant="ghost" size="sm" asChild disabled={isSigningOut}>
+            <Button variant="ghost" size="sm" asChild disabled={isLoading}>
               <Link href="/documents">Enter Notion</Link>
             </Button>
             <Button
               size="sm"
               onClick={handleSignOut}
-              disabled={isSigningOut}
+              disabled={isLoading}
               variant="outline"
             >
               {user?.name || "User"}

@@ -4,7 +4,6 @@ import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { MenuIcon } from "lucide-react";
 import { Title } from "./title";
-import { Banner } from "./banner";
 import { Menu } from "./menu";
 import { Publish } from "./publish";
 import { getDocumentById } from "@/lib/data";
@@ -13,6 +12,7 @@ import {
   VeltPresence,
   VeltSidebarButton,
 } from "@veltdev/react";
+import { Banner } from "./banner";
 
 interface NavbarProps {
   isCollapsed: boolean;

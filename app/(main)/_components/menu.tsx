@@ -1,7 +1,9 @@
+// app/(main)/_components/menu.tsx
 "use client";
+
 import { useRouter } from "next/navigation";
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+import { archiveDocument } from "@/lib/data";
+import { useAuthStore } from "@/lib/auth-store";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,32 +11,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useMutation } from "convex/react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Trash } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useUser } from "@clerk/nextjs";
 
 interface MenuProps {
-  documentId: Id<"documents">;
+  documentId: string;
 }
 
 export const Menu = ({ documentId }: MenuProps) => {
   const router = useRouter();
-  const { user } = useUser();
-
-  const archive = useMutation(api.documents.archive);
+  const { user } = useAuthStore();
 
   const onArchive = () => {
-    const promise = archive({ id: documentId });
+    const success = archiveDocument(documentId);
 
-    toast.promise(promise, {
+    toast.promise(Promise.resolve(success), {
       loading: "Moving to trash...",
-      success: "Note moved to trash!",
+      success: success ? "Note moved to trash!" : "Failed to archive note.",
       error: "Failed to archive note.",
     });
-    router.push("/documents");
+
+    if (success) {
+      router.push("/documents");
+    }
   };
 
   return (
@@ -55,8 +56,8 @@ export const Menu = ({ documentId }: MenuProps) => {
           Delete
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <div className="text-xs to-muted-foreground p-2">
-          Last edited by: {user?.fullName}
+        <div className="text-xs text-muted-foreground p-2">
+          Last edited by: {user?.name || "Anonymous"}
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

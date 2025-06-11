@@ -2,39 +2,36 @@
 
 import { ConfirmModal } from "@/components/modals/confirm-modal";
 import { Button } from "@/components/ui/button";
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
+import { deleteDocument, restoreDocument } from "@/lib/data";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 interface BannerProps {
-  documentId: Id<"documents">;
+  documentId: string;
 }
 
 export const Banner = ({ documentId }: BannerProps) => {
   const router = useRouter();
-
-  const remove = useMutation(api.documents.remove);
-  const restore = useMutation(api.documents.restore);
-
   const onRemove = () => {
-    const promise = remove({ id: documentId });
+    const success = deleteDocument(documentId);
 
-    toast.promise(promise, {
+    toast.promise(Promise.resolve(success), {
       loading: "Deleting note...",
-      success: "Note deleted!",
+      success: success ? "Note deleted!" : "Failed to delete note.",
       error: "Failed to delete note.",
     });
-    router.push("/documents");
+
+    if (success) {
+      router.push("/documents");
+    }
   };
 
   const onRestore = () => {
-    const promise = restore({ id: documentId });
+    const restoredDoc = restoreDocument(documentId);
 
-    toast.promise(promise, {
+    toast.promise(Promise.resolve(restoredDoc), {
       loading: "Restoring note...",
-      success: "Note restored!",
+      success: restoredDoc ? "Note restored!" : "Failed to restore note.",
       error: "Failed to restore note.",
     });
   };
@@ -57,7 +54,6 @@ export const Banner = ({ documentId }: BannerProps) => {
       <ConfirmModal onConfirm={onRemove}>
         <Button
           size="sm"
-          onClick={onRemove}
           variant="outline"
           className="border-white bg-transparent hover:bg-primary/5
            text-white hover:text-white p-1 px-2 h-auto font-normal"

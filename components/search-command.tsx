@@ -1,8 +1,8 @@
 "use client";
 
-import { api } from "@/convex/_generated/api";
 import { useSearch } from "@/hooks/use-search";
-import { useQuery } from "convex/react";
+import { getDocuments } from "@/lib/data";
+import { useAuthStore } from "@/lib/auth-store";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -14,17 +14,23 @@ import {
   CommandList,
 } from "./ui/command";
 import { File } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
 
 export const SearchCommand = () => {
-  const { user } = useUser();
+  const { user } = useAuthStore();
   const router = useRouter();
-  const documents = useQuery(api.documents.getSearch);
+  const [documents, setDocuments] = useState<any[]>([]);
   const [isMounted, setIsMounted] = useState(false);
 
   const toggle = useSearch((store) => store.toggle);
   const isOpen = useSearch((store) => store.isOpen);
   const onClose = useSearch((store) => store.onClose);
+
+  useEffect(() => {
+    if (user) {
+      const docs = getDocuments(user.id);
+      setDocuments(docs);
+    }
+  }, [user]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -50,18 +56,22 @@ export const SearchCommand = () => {
     return null;
   }
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <CommandDialog open={isOpen} onOpenChange={onClose}>
-      <CommandInput placeholder={`Search ${user?.fullName}'s Notion...`} />
+      <CommandInput placeholder={`Search ${user.name}'s Notion...`} />
       <CommandList>
-        <CommandEmpty>No result found.</CommandEmpty>
+        <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Documents">
-          {documents?.map((document) => (
+          {documents.map((document) => (
             <CommandItem
-              key={document._id}
-              value={`${document._id}`}
+              key={document.id}
+              value={document.id}
               title={document.title}
-              onSelect={onSelect}
+              onSelect={() => onSelect(document.id)}
             >
               {document.icon ? (
                 <p className="mr-2 text-[18px]">{document.icon}</p>

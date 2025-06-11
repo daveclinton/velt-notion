@@ -3,9 +3,8 @@
 import { ConfirmModal } from "@/components/modals/confirm-modal";
 import { Spinner } from "@/components/spinner";
 import { Input } from "@/components/ui/input";
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { getDocuments, restoreDocument, deleteDocument } from "@/lib/data";
+import { useAuthStore } from "@/lib/auth-store";
 import { Search, Trash, Undo } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -14,15 +13,21 @@ import { toast } from "sonner";
 export const TrashBox = () => {
   const router = useRouter();
   const params = useParams();
-  const documents = useQuery(api.documents.getTrash);
-  const restore = useMutation(api.documents.restore);
-  const remove = useMutation(api.documents.remove);
-
+  const { user } = useAuthStore();
   const [search, setSearch] = useState("");
 
-  const filterDocuments = documents?.filter((document) => {
-    return document.title.toLowerCase().includes(search.toLocaleLowerCase());
-  });
+  if (!user) {
+    return (
+      <div className="h-full flex items-center justify-center p-4">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  const documents = getDocuments(user.id).filter((doc) => doc.isArchived);
+  const filteredDocuments = documents?.filter((document) =>
+    document.title.toLowerCase().includes(search.toLowerCase())
+  );
 
   const onClick = (documentId: string) => {
     router.push(`/documents/${documentId}`);
@@ -30,25 +35,25 @@ export const TrashBox = () => {
 
   const onRestore = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    documentId: Id<"documents">
+    documentId: string
   ) => {
     event.stopPropagation();
 
-    const promise = restore({ id: documentId });
+    const restoredDoc = restoreDocument(documentId);
 
-    toast.promise(promise, {
+    toast.promise(Promise.resolve(restoredDoc), {
       loading: "Restoring note...",
-      success: "Note restored!",
-      error: "Failed to restored note.",
+      success: restoredDoc ? "Note restored!" : "Failed to restore note.",
+      error: "Failed to restore note.",
     });
   };
 
-  const onRemove = (documentId: Id<"documents">) => {
-    const promise = remove({ id: documentId });
+  const onRemove = (documentId: string) => {
+    const success = deleteDocument(documentId);
 
-    toast.promise(promise, {
+    toast.promise(Promise.resolve(success), {
       loading: "Deleting note...",
-      success: "Note deleted!",
+      success: success ? "Note deleted!" : "Failed to delete note.",
       error: "Failed to delete note.",
     });
 
@@ -57,13 +62,14 @@ export const TrashBox = () => {
     }
   };
 
-  if (documents === undefined) {
+  if (!documents) {
     return (
       <div className="h-full flex items-center justify-center p-4">
         <Spinner size="lg" />
       </div>
     );
   }
+
   return (
     <div className="text-sm">
       <div className="flex items-center gap-x-1 p-2">
@@ -76,39 +82,37 @@ export const TrashBox = () => {
         />
       </div>
       <div className="mt-2 px-1 pb-1">
-        <p className="hidden last:block text-xs text-center">
+        <p className="hidden last:block text-xs text-center text-muted-foreground">
           No documents found.
         </p>
-        {filterDocuments?.map((document, ind) => {
-          return (
-            <div
-              key={ind}
-              role="button"
-              onClick={() => onClick(document._id)}
-              className="text-sm rounded-sm w-full hover:bg-primary/5 
-                flex items-center text-primary justify-between"
-            >
-              <span className="truncate pl-2 ">{document.title}</span>
-              <div className="flex items-center">
+        {filteredDocuments?.map((document) => (
+          <div
+            key={document.id}
+            role="button"
+            onClick={() => onClick(document.id)}
+            className="text-sm rounded-sm w-full hover:bg-primary/5 
+              flex items-center text-primary justify-between"
+          >
+            <span className="truncate pl-2">{document.title}</span>
+            <div className="flex items-center">
+              <div
+                onClick={(e) => onRestore(e, document.id)}
+                role="button"
+                className="rounded-sm p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600"
+              >
+                <Undo className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <ConfirmModal onConfirm={() => onRemove(document.id)}>
                 <div
-                  onClick={(e) => onRestore(e, document._id)}
                   role="button"
                   className="rounded-sm p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600"
                 >
-                  <Undo className="h-4 w-4 to-muted-foreground" />
+                  <Trash className="h-4 w-4 text-muted-foreground" />
                 </div>
-                <ConfirmModal onConfirm={() => onRemove(document._id)}>
-                  <div
-                    role="button"
-                    className="rounded-sm p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600"
-                  >
-                    <Trash className="h-4 w-4 to-muted-foreground" />
-                  </div>
-                </ConfirmModal>
-              </div>
+              </ConfirmModal>
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </div>
   );

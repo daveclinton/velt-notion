@@ -2,30 +2,67 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { useMutation } from "convex/react";
 import { PlusCircle } from "lucide-react";
-import { api } from "@/convex/_generated/api";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useUser } from "@clerk/nextjs";
+import { useAuthStore } from "@/lib/auth-store";
+import { createDocument, Document, getDocuments } from "@/lib/data";
 
 const DocumentsPage = () => {
   const router = useRouter();
-  const { user } = useUser();
-  const create = useMutation(api.documents.create);
+  const { user, isAuthenticated } = useAuthStore();
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const onCreate = () => {
-    const promise = create({ title: "Untitled" }).then((documentId) =>
-      router.push(`/documents/${documentId}`)
-    );
+  useEffect(() => {
+    if (user?.id) {
+      try {
+        const userDocs = getDocuments(user.id);
+        setDocuments(userDocs);
+      } catch (error) {
+        console.error("Failed to load documents:", error);
+        toast.error("Failed to load documents");
+      }
+    }
+  }, [user?.id]);
 
-    toast.promise(promise, {
-      loading: "Creating a new note...",
-      success: "New note created!",
-      error: "Failed to create a new note.",
-    });
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/sign-in");
+    }
+  }, [isAuthenticated, router]);
+
+  const onCreate = async () => {
+    if (!user?.id) {
+      toast.error("Please sign in to create documents");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const newDocument = createDocument(user.id, "Untitled");
+
+      if (newDocument) {
+        setDocuments((prev) => [...prev, newDocument]);
+
+        toast.success("New note created!");
+        router.push(`/documents/${newDocument.id}`);
+      } else {
+        toast.error("Failed to create document");
+      }
+    } catch (error) {
+      console.error("Error creating document:", error);
+      toast.error("Failed to create a new note");
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="h-full flex flex-col items-center justify-center space-y-4">
@@ -46,12 +83,20 @@ const DocumentsPage = () => {
         className="hidden dark:block"
       />
       <h2 className="text-lg font-medium">
-        Welcome to {user?.firstName}&apos; Notion
+        Welcome to {user?.name}&apos;s Notion
       </h2>
-      <Button onClick={onCreate}>
+      <Button onClick={onCreate} disabled={isLoading}>
         <PlusCircle className="h-4 w-4 mr-2" />
-        Create a note
+        {isLoading ? "Creating..." : "Create a note"}
       </Button>
+
+      {/* Show existing documents count if any */}
+      {documents.length > 0 && (
+        <p className="text-sm text-muted-foreground mt-4">
+          You have {documents.length} document
+          {documents.length !== 1 ? "s" : ""}
+        </p>
+      )}
     </div>
   );
 };

@@ -1,36 +1,36 @@
-// lib/auth.ts
 export interface User {
   id: string;
   name: string;
   email: string;
-  image?: string;
+  imageUrl?: string;
 }
 
-let mockUser: User | null = null;
+let currentUser: User | null = null;
 
-export function signIn(email: string, password: string): Promise<User | null> {
-  // Simulate a successful login for demo purposes
-  if (email && password) {
-    mockUser = {
-      id: "user_123",
-      name: "Demo User",
-      email,
-      image: "/logo.svg",
-    };
-    return Promise.resolve(mockUser);
+export async function signIn(email: string, password: string): Promise<User> {
+  if (!email || !password) {
+    throw new Error("Invalid credentials");
   }
-  return Promise.resolve(null);
+  const user: User = {
+    id: `user_${Math.random().toString(36).slice(2)}`,
+    name: email.split("@")[0],
+    email,
+    imageUrl: `https://ui-avatars.com/api/?name=${email}`,
+  };
+  currentUser = user;
+  localStorage.setItem("currentUser", JSON.stringify(user));
+  return user;
 }
 
-export function signOut(): Promise<void> {
-  mockUser = null;
-  return Promise.resolve();
+export async function signOut(): Promise<void> {
+  currentUser = null;
+  localStorage.removeItem("currentUser");
 }
 
 export function getCurrentUser(): User | null {
-  return mockUser;
-}
-
-export function isAuthenticated(): boolean {
-  return !!mockUser;
+  if (typeof window !== "undefined") {
+    const saved = localStorage.getItem("currentUser");
+    return saved ? JSON.parse(saved) : null;
+  }
+  return currentUser;
 }
