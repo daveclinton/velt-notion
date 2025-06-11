@@ -8,13 +8,14 @@ import { SearchCommand } from "@/components/search-command";
 import { useAuthStore } from "@/lib/auth-store";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isLoading, initialize } = useAuthStore();
+  const { isAuthenticated, isLoading, initialize, isInitialized } =
+    useAuthStore();
 
   useEffect(() => {
     initialize();
   }, [initialize]);
 
-  if (isLoading) {
+  if (isLoading || !isInitialized) {
     return (
       <div className="h-full flex items-center justify-center">
         <Spinner size="lg" />
@@ -23,7 +24,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!isAuthenticated) {
-    redirect("/");
+    redirect("/sign-in");
   }
 
   return (

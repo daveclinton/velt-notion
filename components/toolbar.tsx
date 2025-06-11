@@ -1,4 +1,3 @@
-// app/(main)/_components/toolbar.tsx
 "use client";
 
 import { useCoverImage } from "@/hooks/use-cover-image";

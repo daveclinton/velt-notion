@@ -18,11 +18,14 @@ const DocumentIdPage = () => {
     []
   );
 
+  // Fetch document using mock utility
   useEffect(() => {
     const doc = getDocumentById(params.documentId);
     setDocument(doc);
     setLoading(false);
   }, [params.documentId]);
+
+  // Update document content using mock utility
   const onChange = (content: string) => {
     if (document) {
       updateDocument(params.documentId, { content });

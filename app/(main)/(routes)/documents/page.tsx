@@ -1,4 +1,5 @@
 "use client";
+
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
@@ -10,7 +11,7 @@ import { createDocument, Document, getDocuments } from "@/lib/data";
 
 const DocumentsPage = () => {
   const router = useRouter();
-  const { user, isAuthenticated } = useAuthStore();
+  const { user } = useAuthStore();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,17 +27,8 @@ const DocumentsPage = () => {
     }
   }, [user?.id]);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/sign-in");
-    }
-  }, [isAuthenticated, router]);
-
   const onCreate = async () => {
-    if (!user?.id) {
-      toast.error("Please sign in to create documents");
-      return;
-    }
+    if (!user?.id) return;
 
     setIsLoading(true);
 
@@ -45,7 +37,6 @@ const DocumentsPage = () => {
 
       if (newDocument) {
         setDocuments((prev) => [...prev, newDocument]);
-
         toast.success("New note created!");
         router.push(`/documents/${newDocument.id}`);
       } else {
@@ -58,10 +49,6 @@ const DocumentsPage = () => {
       setIsLoading(false);
     }
   };
-
-  if (!isAuthenticated) {
-    return null;
-  }
 
   return (
     <div className="h-full flex flex-col items-center justify-center space-y-4">
@@ -89,7 +76,6 @@ const DocumentsPage = () => {
         {isLoading ? "Creating..." : "Create a note"}
       </Button>
 
-      {/* Show existing documents count if any */}
       {documents.length > 0 && (
         <p className="text-sm text-muted-foreground mt-4">
           You have {documents.length} document

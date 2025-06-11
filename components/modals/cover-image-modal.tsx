@@ -4,14 +4,12 @@ import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { useCoverImage } from "@/hooks/use-cover-image";
 import { SingleImageDropzone } from "@/components/single-image-dropzone";
 import { useState } from "react";
-import { useEdgeStore } from "@/lib/edgestore";
 import { updateDocument } from "@/lib/data";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
 export const CoverImageModal = () => {
   const params = useParams();
-  const { edgestore } = useEdgeStore();
   const coverImage = useCoverImage();
   const [file, setFile] = useState<File>();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,15 +26,8 @@ export const CoverImageModal = () => {
       setFile(file);
 
       try {
-        const res = await edgestore.publicFiles.upload({
-          file,
-          options: {
-            replaceTargetUrl: coverImage.url,
-          },
-        });
-
         const updatedDoc = updateDocument(params.documentId as string, {
-          coverImage: res.url,
+          coverImage: coverImage.url,
         });
 
         if (!updatedDoc) {

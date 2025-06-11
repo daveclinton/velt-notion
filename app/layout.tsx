@@ -4,7 +4,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ModalProvider } from "@/components/providers/modal-providers";
-import { EdgeStoreProvider } from "@/lib/edgestore";
 import { VeltWrapper } from "./velt-provider";
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,21 +34,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body className={inter.className}>
-        <EdgeStoreProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-            storageKey="notion-theme-2"
-          >
-            <VeltWrapper>
-              <Toaster position="top-center" />
-              <ModalProvider />
-              {children}
-            </VeltWrapper>
-          </ThemeProvider>
-        </EdgeStoreProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+          storageKey="notion-theme-2"
+        >
+          <VeltWrapper>
+            <Toaster position="top-center" />
+            <ModalProvider />
+            {children}
+          </VeltWrapper>
+        </ThemeProvider>
       </body>
     </html>
   );
