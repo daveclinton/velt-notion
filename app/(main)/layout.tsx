@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { Navigation } from "./_components/navigation";
 import { Spinner } from "@/components/spinner";
 import { SearchCommand } from "@/components/search-command";
@@ -9,7 +9,6 @@ import { useAuthStore } from "@/lib/auth-store";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading, initialize } = useAuthStore();
-  const router = useRouter();
 
   useEffect(() => {
     initialize();
@@ -24,8 +23,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!isAuthenticated) {
-    router.push("/");
-    return null;
+    redirect("/");
   }
 
   return (
