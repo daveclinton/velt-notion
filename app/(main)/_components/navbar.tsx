@@ -1,14 +1,13 @@
 "use client";
 
-import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
-import { Id } from "@/convex/_generated/dataModel";
+import { useState, useEffect } from "react";
 import { MenuIcon } from "lucide-react";
 import { Title } from "./title";
 import { Banner } from "./banner";
 import { Menu } from "./menu";
 import { Publish } from "./publish";
+import { getDocumentById } from "@/lib/data";
 import {
   VeltCommentTool,
   VeltPresence,
@@ -21,16 +20,21 @@ interface NavbarProps {
 }
 
 export const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
-  const params = useParams();
-  const document = useQuery(api.documents.getById, {
-    documentId: params.documentId as Id<"documents">,
-  });
+  const params = useParams<{ documentId: string }>();
+  const [document, setDocument] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (document === undefined) {
+  useEffect(() => {
+    const doc = getDocumentById(params.documentId);
+    setDocument(doc);
+    setLoading(false);
+  }, [params.documentId]);
+
+  if (loading) {
     return (
       <nav
         className="bg-background dark:bg-[#1F1F1F] px-3 py-2 w-full
-     flex items-center justify-between"
+        flex items-center justify-between"
       >
         <Title.Skeleton />
         <div className="flex items-center gap-x-2">
@@ -40,7 +44,7 @@ export const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
     );
   }
 
-  if (document === null) {
+  if (!document) {
     return null;
   }
 
@@ -51,7 +55,7 @@ export const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
           <MenuIcon
             role="button"
             onClick={onResetWidth}
-            className="h-6 w-6 to-muted-foreground"
+            className="h-6 w-6 text-muted-foreground"
           />
         )}
         <div className="flex items-center justify-between w-full">
@@ -63,11 +67,11 @@ export const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
               <VeltCommentTool />
             </div>
             <Publish initialData={document} />
-            <Menu documentId={document._id} />
+            <Menu documentId={document.id} />
           </div>
         </div>
       </nav>
-      {document.isArchived && <Banner documentId={document._id} />}
+      {document.isArchived && <Banner documentId={document.id} />}
     </>
   );
 };

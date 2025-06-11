@@ -2,45 +2,69 @@
 
 import { useScrollTop } from "@/hooks/use-scroll-top";
 import { cn } from "@/lib/utils";
-import React from "react";
 import { Logo } from "./logo";
 import { ModeToggle } from "@/components/mode-toggle";
-import { useConvexAuth } from "convex/react";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/spinner";
 import Link from "next/link";
-import { SignInButton, UserButton } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { getCurrentUser, isAuthenticated, signOut } from "@/lib/auth";
 
 const Navbar = () => {
-  const { isAuthenticated, isLoading } = useConvexAuth();
   const scrolled = useScrollTop();
+  const user = getCurrentUser();
+  const isAuth = isAuthenticated();
+  const router = useRouter();
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    await signOut();
+    router.push("/");
+    setIsSigningOut(false);
+  };
 
   return (
     <div
       className={cn(
         "z-50 bg-background dark:bg-[#1F1F1F] fixed top-0 flex items-center w-full p-6",
-        scrolled ? "border-b shadow-sm" : ""
+        scrolled && "border-b shadow-sm"
       )}
     >
       <Logo />
       <div className="md:ml-auto md:justify-end justify-between w-full flex items-center gap-x-2">
-        {isLoading && <Spinner />}
-        {!isAuthenticated && !isLoading && (
+        {!isAuth && (
           <>
-            <SignInButton mode="modal">
-              <Button size="sm">Login</Button>
-            </SignInButton>
-            <SignInButton mode="modal">
-              <Button size="sm">Get Notion free</Button>
-            </SignInButton>
+            <Button
+              size="sm"
+              onClick={() => router.push("/sign-in")}
+              disabled={isSigningOut}
+            >
+              Login
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => router.push("/sign-in")}
+              disabled={isSigningOut}
+            >
+              Get Notion free
+            </Button>
           </>
         )}
-        {isAuthenticated && !isLoading && (
+        {isAuth && (
           <>
-            <Button variant="ghost" size="sm" asChild>
+            <Button variant="ghost" size="sm" asChild disabled={isSigningOut}>
               <Link href="/documents">Enter Notion</Link>
             </Button>
-            <UserButton afterSignOutUrl="/" />
+            <Button
+              size="sm"
+              onClick={handleSignOut}
+              disabled={isSigningOut}
+              variant="outline"
+            >
+              {user?.name || "User"}
+              <span className="ml-2">Sign Out</span>
+            </Button>
           </>
         )}
         <ModeToggle />
