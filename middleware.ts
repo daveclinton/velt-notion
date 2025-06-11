@@ -20,11 +20,11 @@ export function middleware(request: NextRequest) {
   });
 
   if (pathname.startsWith("/documents") && !isPublicRoute) {
-    if (!user) {
-      const signInUrl = new URL("/sign-in", request.url);
-      signInUrl.searchParams.set("redirect", pathname);
-      return NextResponse.redirect(signInUrl);
-    }
+    // if (!user) {
+    //   const signInUrl = new URL("/sign-in", request.url);
+    //   signInUrl.searchParams.set("redirect", pathname);
+    //   return NextResponse.redirect(signInUrl);
+    // }
   }
 
   return NextResponse.next();

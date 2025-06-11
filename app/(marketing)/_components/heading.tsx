@@ -2,12 +2,15 @@
 
 import { Spinner } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
+import { getCurrentUser } from "@/lib/auth";
 import { useAuthStore } from "@/lib/auth-store";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 const Heading = () => {
   const { isAuthenticated, isLoading } = useAuthStore();
+  const user = getCurrentUser();
+  console.log("userrrrrrs", !user);
 
   return (
     <div className="max-w-3xl space-y-4">
