@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ConvexClientProvider } from "@/components/providers/convex-provider";
 import { ModalProvider } from "@/components/providers/modal-providers";
 import { EdgeStoreProvider } from "@/lib/edgestore";
+import { VeltWrapper } from "./velt-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -44,9 +45,11 @@ export default function RootLayout({
               disableTransitionOnChange
               storageKey="notion-theme-2"
             >
-              <Toaster position="top-center" />
-              <ModalProvider />
-              {children}
+              <VeltWrapper>
+                <Toaster position="top-center" />
+                <ModalProvider />
+                {children}
+              </VeltWrapper>
             </ThemeProvider>
           </EdgeStoreProvider>
         </ConvexClientProvider>

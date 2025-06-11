@@ -6,10 +6,10 @@ import React from "react";
 import { Logo } from "./logo";
 import { ModeToggle } from "@/components/mode-toggle";
 import { useConvexAuth } from "convex/react";
-import { SignInButton, UserButton } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/spinner";
 import Link from "next/link";
+import { SignInButton, UserButton } from "@clerk/nextjs";
 
 const Navbar = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();

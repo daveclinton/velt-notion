@@ -2,13 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { useUser } from "@clerk/clerk-react";
 import { useMutation } from "convex/react";
 import { PlusCircle } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import Image from "next/image";
 import React from "react";
 import { toast } from "sonner";
+import { useUser } from "@clerk/nextjs";
 
 const DocumentsPage = () => {
   const router = useRouter();
