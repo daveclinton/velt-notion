@@ -10,15 +10,10 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
 import React from "react";
-import { useSetDocument } from "@veltdev/react";
+import { useParams } from "next/navigation";
 
-interface DocumentIdPageProps {
-  params: {
-    documentId: Id<"documents">;
-  };
-}
-
-const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
+const DocumentIdPage = () => {
+  const params = useParams<{ documentId: Id<"documents"> }>();
   const Editor = useMemo(
     () => dynamic(() => import("@/components/editor"), { ssr: false }),
     []
@@ -26,10 +21,6 @@ const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
 
   const document = useQuery(api.documents.getById, {
     documentId: params.documentId,
-  });
-
-  useSetDocument(document?._id || "no_document", {
-    documentName: document?.title || "Loading...",
   });
 
   const update = useMutation(api.documents.update);

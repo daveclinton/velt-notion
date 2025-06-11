@@ -10,14 +10,10 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
 import React from "react";
+import { useParams } from "next/navigation";
 
-interface DocumentIdPageProps {
-  params: {
-    documentId: Id<"documents">;
-  };
-}
-
-const DocumentIdPage = ({ params }: DocumentIdPageProps) => {
+const DocumentIdPage = () => {
+  const params = useParams<{ documentId: Id<"documents"> }>();
   const Editor = useMemo(
     () => dynamic(() => import("@/components/editor"), { ssr: false }),
     []
