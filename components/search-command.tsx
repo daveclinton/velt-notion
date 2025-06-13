@@ -20,7 +20,6 @@ export const SearchCommand = () => {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
 
-  // Get documents using Zustand store
   const documents = useDocuments(user?.id || "");
 
   const toggle = useSearch((store) => store.toggle);

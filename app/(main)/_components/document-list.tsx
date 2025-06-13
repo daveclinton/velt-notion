@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useDocumentStore } from "@/lib/document-store";
 import { useAuthStore } from "@/lib/auth-store";
 import { Item } from "./item";
@@ -23,11 +23,8 @@ export const DocumentList = ({
   const { user } = useAuthStore();
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
-  // Get documents from Zustand store and filter them
   const documents = useDocumentStore((state) => {
-    if (!user) return [];
-
-    const allDocs = state.getDocuments(user.id);
+    const allDocs = state.getDocuments();
     return parentDocumentId
       ? allDocs.filter((doc) => doc.parentDocumentId === parentDocumentId)
       : allDocs.filter((doc) => !doc.parentDocumentId);
@@ -39,6 +36,8 @@ export const DocumentList = ({
       [documentId]: !prevExpanded[documentId],
     }));
   };
+
+  console.log(user);
 
   const onRedirect = (documentId: string) => {
     router.push(`/documents/${documentId}`);

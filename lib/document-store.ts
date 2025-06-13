@@ -19,7 +19,7 @@ interface DocumentState {
   documents: Document[];
 
   // Actions
-  getDocuments: (userId: string) => Document[];
+  getDocuments: () => Document[];
   getDocumentById: (id: string) => Document | null;
   createDocument: (
     userId: string,
@@ -78,14 +78,9 @@ export const useDocumentStore = create<DocumentState>()(
         },
       ],
 
-      getDocuments: (userId: string) => {
-        if (!userId) {
-          throw new Error("User ID is required");
-        }
+      getDocuments: () => {
         const { documents } = get();
-        return documents.filter(
-          (doc) => doc.userId === userId && !doc.isArchived
-        );
+        return documents;
       },
 
       getDocumentById: (id: string) => {
@@ -230,7 +225,7 @@ export const useDocumentStore = create<DocumentState>()(
 );
 
 export const useDocuments = (userId: string) => {
-  return useDocumentStore((state) => state.getDocuments(userId));
+  return useDocumentStore((state) => state.getDocuments());
 };
 
 export const useDocument = (id: string) => {
