@@ -51,7 +51,8 @@ export const useDocumentStore = create<DocumentState>()(
           isArchived: false,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          coverImage: "/documents.png",
+          coverImage:
+            "https://files.edgestore.dev/r398wokexldr75py/publicFiles/_public/e7316a99-6c21-465b-aaf8-bb0ee5ffd3ec.png",
           icon: "📄",
         },
         {
@@ -63,7 +64,9 @@ export const useDocumentStore = create<DocumentState>()(
           isArchived: false,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          icon: "📄",
+          coverImage:
+            "https://files.edgestore.dev/r398wokexldr75py/publicFiles/_public/61b1bf30-97a4-41df-8f95-ac7abcc98237.png",
+          icon: "🥰",
         },
         {
           id: "doc_3",
@@ -74,7 +77,9 @@ export const useDocumentStore = create<DocumentState>()(
           isArchived: false,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          icon: "📄",
+          coverImage:
+            "https://files.edgestore.dev/r398wokexldr75py/publicFiles/_public/4551f6f7-786f-4907-9720-3deb1dfa29c9.jpeg",
+          icon: "👻",
         },
       ],
 

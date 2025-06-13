@@ -8,12 +8,12 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/lib/auth-store";
 import { useDocuments, useDocumentActions } from "@/lib/document-store";
+import RecentlyVisited from "@/components/recently-visited";
 
 const DocumentsPage = () => {
   const router = useRouter();
   const { user } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
-
   const documents = useDocuments(user?.id || "");
   const { createDocument } = useDocumentActions();
 
@@ -38,6 +38,29 @@ const DocumentsPage = () => {
     }
   };
 
+  if (documents.length > 0) {
+    return (
+      <div className="h-full p-8">
+        <RecentlyVisited />
+
+        <div className="max-w-7xl flex justify-between mx-auto">
+          <div>
+            <p className="text-sm text-muted-foreground mt-1">
+              You have {documents.length} document
+              {documents.length !== 1 ? "s" : ""}
+            </p>
+          </div>
+
+          <Button onClick={onCreate} disabled={isLoading}>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            {isLoading ? "Creating..." : "Create a note"}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show empty state if no documents
   return (
     <div className="h-full flex flex-col items-center justify-center space-y-4">
       <Image
@@ -63,13 +86,6 @@ const DocumentsPage = () => {
         <PlusCircle className="h-4 w-4 mr-2" />
         {isLoading ? "Creating..." : "Create a note"}
       </Button>
-
-      {documents.length > 0 && (
-        <p className="text-sm text-muted-foreground mt-4">
-          You have {documents.length} document
-          {documents.length !== 1 ? "s" : ""}
-        </p>
-      )}
     </div>
   );
 };
