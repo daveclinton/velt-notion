@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { document_One, document_Three, document_Two } from "./data";
 
 export interface Document {
   id: string;
@@ -44,7 +45,7 @@ export const useDocumentStore = create<DocumentState>()(
         {
           id: "doc_1",
           title: "Sample Document",
-          content: "This is a sample document.",
+          content: document_One,
           userId: "user_123",
           isPublished: true,
           isArchived: false,
@@ -55,20 +56,19 @@ export const useDocumentStore = create<DocumentState>()(
         },
         {
           id: "doc_2",
-          title: "Child Document",
-          content: "This is a child document.",
+          title: "Getting Started with Tiptap",
+          content: document_Two,
           userId: "user_123",
           isPublished: false,
-          isArchived: true,
+          isArchived: false,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           icon: "📄",
-          parentDocumentId: "doc_1",
         },
         {
           id: "doc_3",
           title: "Test Document",
-          content: "Test content.",
+          content: document_Three,
           userId: "user_123",
           isPublished: false,
           isArchived: false,

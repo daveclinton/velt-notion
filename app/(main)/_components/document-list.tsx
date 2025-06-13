@@ -37,8 +37,6 @@ export const DocumentList = ({
     }));
   };
 
-  console.log(user);
-
   const onRedirect = (documentId: string) => {
     router.push(`/documents/${documentId}`);
   };
