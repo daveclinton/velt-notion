@@ -6,7 +6,7 @@ import { useCommentAnnotations } from "@veltdev/react";
 import { useEffect } from "react";
 import { highlightComments } from "@veltdev/tiptap-velt-comments";
 
-export default function Tiptap() {
+export default function Editor() {
   const annotations = useCommentAnnotations();
 
   const editor = useEditor({

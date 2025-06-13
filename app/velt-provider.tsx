@@ -8,12 +8,14 @@ import {
   VeltComments,
   VeltCommentsSidebar,
 } from "@veltdev/react";
+import { useTheme } from "next-themes";
 
 export function VeltWrapper({ children }: { children: ReactNode }) {
+  const { theme } = useTheme();
   return (
     <VeltProvider apiKey={process.env.NEXT_PUBLIC_VELT_KEY || ""}>
       <VeltAuthHandler />
-      <VeltComments textMode={false} />
+      <VeltComments textMode={false} darkMode={theme === "dark"} />
       <VeltCommentsSidebar />
       {children}
     </VeltProvider>
