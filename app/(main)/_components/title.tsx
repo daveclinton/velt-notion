@@ -17,7 +17,7 @@ export const Title = ({ initialData }: TitleProps) => {
   const { user } = useAuthStore();
   const { updateDocument } = useDocumentActions();
 
-  const [title, setTitle] = useState(initialData.title || "Untitled");
+  const [title, setTitle] = useState(initialData.title || "");
   const [isEditing, setIsEditing] = useState(false);
 
   const enableInput = () => {
@@ -41,7 +41,7 @@ export const Title = ({ initialData }: TitleProps) => {
 
     setTitle(e.target.value);
     const updatedDoc = updateDocument(initialData.id, {
-      title: e.target.value || "Untitled",
+      title: e.target.value || "",
     });
 
     if (!updatedDoc) {

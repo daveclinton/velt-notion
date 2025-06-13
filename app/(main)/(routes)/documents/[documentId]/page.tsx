@@ -28,7 +28,7 @@ const DocumentIdPage = () => {
   };
 
   useSetDocument(params?.documentId, {
-    documentName: document?.title || "Untitled",
+    documentName: document?.title || "",
   });
 
   if (document === undefined) {

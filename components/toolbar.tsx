@@ -37,7 +37,7 @@ export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
   const onInput = (value: string) => {
     setValue(value);
     const updatedDoc = updateDocument(initialData.id, {
-      title: value || "Untitled",
+      title: value || "",
     });
 
     if (!updatedDoc) {

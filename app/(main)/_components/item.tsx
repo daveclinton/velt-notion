@@ -80,7 +80,7 @@ export const Item = ({
     event.stopPropagation();
     if (!id || !user) return;
 
-    const newDoc = createDocument(user.id, "Untitled", id);
+    const newDoc = createDocument(user.id, "", id);
 
     toast.promise(Promise.resolve(newDoc), {
       loading: "Creating a new note...",

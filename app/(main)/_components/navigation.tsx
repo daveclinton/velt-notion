@@ -127,7 +127,7 @@ export const Navigation = () => {
       return;
     }
 
-    const newDoc = createDocument(user.id, "Untitled");
+    const newDoc = createDocument(user.id, "");
 
     toast.promise(Promise.resolve(newDoc), {
       loading: "Creating a new note...",

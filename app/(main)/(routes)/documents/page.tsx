@@ -23,8 +23,7 @@ const DocumentsPage = () => {
     setIsLoading(true);
 
     try {
-      const newDocument = createDocument(user.id, "Untitled");
-
+      const newDocument = createDocument(user.id, "");
       if (newDocument) {
         toast.success("New note created!");
         router.push(`/documents/${newDocument.id}`);
