@@ -16,7 +16,7 @@ export default function Tiptap() {
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm pl-[32px] sm:prose-base  lg:prose-lg xl:prose-2xl m-5 focus:outline-none",
+          "prose prose-sm pl-[32px] sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none dark:prose-invert",
       },
     },
     content: `

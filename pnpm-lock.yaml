@@ -50,9 +50,6 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.3
         version: 1.2.3(@types/react@18.3.23)(react@18.3.1)
-      '@tailwindcss/typography':
-        specifier: ^0.5.16
-        version: 0.5.16(tailwindcss@3.4.17)
       '@tiptap/core':
         specifier: ^2.14.0
         version: 2.14.0(@tiptap/pm@2.14.0)
@@ -141,11 +138,11 @@ importers:
         specifier: ^2.14.0
         version: 2.14.0
       '@veltdev/react':
-        specifier: 4.5.0-beta.21
-        version: 4.5.0-beta.21(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 4.4.0-beta.12
+        version: 4.4.0-beta.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@veltdev/tiptap-velt-comments':
-        specifier: 4.5.0-beta.13
-        version: 4.5.0-beta.13(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))
+        specifier: ^4.2.0
+        version: 4.2.0(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -204,6 +201,9 @@ importers:
         specifier: ^4.5.7
         version: 4.5.7(@types/react@18.3.23)(react@18.3.1)
     devDependencies:
+      '@tailwindcss/typography':
+        specifier: ^0.5.16
+        version: 0.5.16(tailwindcss@3.4.17)
       '@types/node':
         specifier: ^20.19.0
         version: 20.19.0
@@ -1723,14 +1723,14 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@veltdev/react@4.5.0-beta.21':
-    resolution: {integrity: sha512-3HvbjNcSj+d8UneFSuCLsYEZbKAV6mpBATSCanAS+YgOPaqQANkYM9Y/AxrAuDJqT4V1CuSULCaoOJTJ+ED5RQ==}
+  '@veltdev/react@4.4.0-beta.12':
+    resolution: {integrity: sha512-sjcq4yQHvf2E4OWe+1JDCJOdGbB6mfwiIfg0d/dMJrj8AAOMHNBVbsmCczIYG4N2xizlfMtIuSGHm4bhuQoiXg==}
     peerDependencies:
       react: ^19.0.0 || ^18.0.0 || ^17.0.0 || ^16.0.0
       react-dom: ^19.0.0 || ^18.0.0 || ^17.0.0 || ^16.0.0
 
-  '@veltdev/tiptap-velt-comments@4.5.0-beta.13':
-    resolution: {integrity: sha512-kMJEz2rfytKBV0YSrhfvnVNP0bibVBWQ2IVuMbvJGVA7e96A7yI56YWBURvMHknH/D5ATjqeE37miLpicpzMOA==}
+  '@veltdev/tiptap-velt-comments@4.2.0':
+    resolution: {integrity: sha512-BoANvXJfeFhgvJYSsUoO/4p/BZ6oI2hQqUX4IlZSh+C+m++dyAbPBSWIx6uOH3C/FYxM2gpp5pFSkrkFzOXjhQ==}
     peerDependencies:
       '@tiptap/core': ^2.x.x
 
@@ -5904,12 +5904,12 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.9.0':
     optional: true
 
-  '@veltdev/react@4.5.0-beta.21(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@veltdev/react@4.4.0-beta.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@veltdev/tiptap-velt-comments@4.5.0-beta.13(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))':
+  '@veltdev/tiptap-velt-comments@4.2.0(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))':
     dependencies:
       '@tiptap/core': 2.14.0(@tiptap/pm@2.14.0)
 
