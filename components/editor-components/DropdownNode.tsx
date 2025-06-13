@@ -14,10 +14,10 @@ import { EnumNodesTypeLabel, nodes, NodeType, NodeTypeEnum } from "./data";
 
 interface SelectNodeProps {
   editor: Editor;
-  container: RefObject<HTMLDivElement>["current"];
+  container?: RefObject<HTMLDivElement>["current"];
 }
 
-const DropdownNode: React.FC<SelectNodeProps> = ({ editor, container }) => {
+const DropdownNode: React.FC<SelectNodeProps> = ({ editor }) => {
   let currentNode: NodeType | undefined = undefined;
 
   if (!editor.isActive("figure")) {
@@ -30,8 +30,8 @@ const DropdownNode: React.FC<SelectNodeProps> = ({ editor, container }) => {
         3: NodeTypeEnum.h3,
       } as const;
       const selectedLevel = editor.state.selection.$head.parent.attrs.level;
-      // @ts-ignore
-      currentNode = headingLevel[selectedLevel] || undefined;
+      currentNode =
+        headingLevel[selectedLevel as keyof typeof headingLevel] || undefined;
     } else if (editor.isActive(NodeTypeEnum.bulletList)) {
       currentNode = NodeTypeEnum.bulletList;
     } else if (editor.isActive(NodeTypeEnum.orderedList)) {
@@ -90,21 +90,30 @@ const DropdownNode: React.FC<SelectNodeProps> = ({ editor, container }) => {
     }
   };
 
+  const getCurrentNodeLabel = () => {
+    return currentNode ? EnumNodesTypeLabel[currentNode] : "Text";
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="shrink-0 hover:bg-accent border-none shadow-[none] ring-0 rounded-none py-1 px-2 flex items-center"
+          className="shrink-0 hover:bg-accent border-none shadow-[none] ring-0 rounded-none py-1 px-2 flex items-center gap-2"
           type="button"
         >
           <span className="h-5 flex items-center justify-center rounded-sm select-none">
-            {EnumNodesTypeLabel[currentNode!]}
-          </span>{" "}
+            {getCurrentNodeLabel()}
+          </span>
           <CaretSortIcon className="h-4 w-4 opacity-50 text-primary" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="z-[9999]" container={container as any}>
-        <DropdownMenuLabel className="text-xxs font-normal py-1">
+      <DropdownMenuContent
+        className="z-[9999]"
+        align="start"
+        side="bottom"
+        sideOffset={4}
+      >
+        <DropdownMenuLabel className="text-xs font-normal py-1 px-2">
           Turn into
         </DropdownMenuLabel>
         {nodes.map((node, idx) => (
@@ -113,12 +122,8 @@ const DropdownNode: React.FC<SelectNodeProps> = ({ editor, container }) => {
             onClick={() => handleClick(node.type)}
             className="cursor-pointer flex justify-between items-center"
           >
-            {node.label}
-            {currentNode == node.type && (
-              <span className="pl-3">
-                <CheckIcon />
-              </span>
-            )}
+            <span>{node.label}</span>
+            {currentNode === node.type && <CheckIcon className="h-4 w-4" />}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

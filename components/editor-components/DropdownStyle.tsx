@@ -14,44 +14,49 @@ import { colors } from "./data";
 
 interface DropdownStyleProps {
   editor: Editor;
-  container: RefObject<HTMLDivElement>["current"];
+  container?: RefObject<HTMLDivElement>["current"];
 }
 
-const DropdownStyle: React.FC<DropdownStyleProps> = ({ editor, container }) => {
+const DropdownStyle: React.FC<DropdownStyleProps> = ({ editor }) => {
+  const currentTextColor = editor.getAttributes("textStyle").color;
+  const currentHighlightColor = editor.getAttributes("highlight").color;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="shrink-0 hover:bg-accent border-none shadow-[none] ring-0 rounded-none py-1 px-2 flex items-center"
+          className="shrink-0 hover:bg-accent border-none shadow-[none] ring-0 rounded-none py-1 px-2 flex items-center gap-2"
           type="button"
         >
           <span
-            className="w-5 h-5 flex items-center justify-center rounded-sm select-none"
+            className="w-5 h-5 flex items-center justify-center rounded-sm select-none font-semibold"
             style={{
-              color: editor.getAttributes("textStyle").color,
-              background: editor.getAttributes("highlight").color,
+              color: currentTextColor || "inherit",
+              background: currentHighlightColor || "transparent",
             }}
           >
             A
-          </span>{" "}
+          </span>
           <CaretSortIcon className="h-4 w-4 opacity-50 text-primary" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="overflow-hidden z-[9999] h-[500px] p-0"
-        container={container}
+        className="overflow-hidden z-[9999] max-h-[500px] p-0 w-48"
+        align="start"
+        side="bottom"
+        sideOffset={4}
       >
-        <div className="max-h-[500px] custom-scroll overflow-y-auto p-1">
-          <DropdownMenuLabel className="text-xxs font-normal py-1">
-            My Account
+        <div className="max-h-[500px] overflow-y-auto p-1">
+          <DropdownMenuLabel className="text-xs font-normal py-1 px-2">
+            TEXT COLOR
           </DropdownMenuLabel>
           <DropdownMenuItem
             onClick={() => {
               editor.chain().focus().unsetColor().run();
             }}
-            className="cursor-pointer flex gap-2"
+            className="cursor-pointer flex gap-2 items-center"
           >
-            <span className="p-1 border rounded-sm w-6 h-6 text-sm flex items-center justify-center border-gray-300">
+            <span className="p-1 border rounded-sm w-6 h-6 text-sm flex items-center justify-center border-gray-300 font-semibold">
               A
             </span>
             Default
@@ -61,12 +66,11 @@ const DropdownStyle: React.FC<DropdownStyleProps> = ({ editor, container }) => {
               key={`color-${idx}`}
               onClick={() => {
                 editor.chain().focus().setColor(value).run();
-                editor.chain().focus().unsetHighlight().run();
               }}
-              className="cursor-pointer flex gap-2"
+              className="cursor-pointer flex gap-2 items-center"
             >
               <span
-                className="p-1 border rounded-sm w-6 h-6 text-sm flex items-center justify-center border-gray-300"
+                className="p-1 border rounded-sm w-6 h-6 text-sm flex items-center justify-center border-gray-300 font-semibold"
                 style={{
                   color: value,
                 }}
@@ -76,17 +80,19 @@ const DropdownStyle: React.FC<DropdownStyleProps> = ({ editor, container }) => {
               {label}
             </DropdownMenuItem>
           ))}
+
           <DropdownMenuSeparator />
-          <DropdownMenuLabel className="text-xxs font-normal py-1">
+
+          <DropdownMenuLabel className="text-xs font-normal py-1 px-2">
             BACKGROUND
           </DropdownMenuLabel>
           <DropdownMenuItem
             onClick={() => {
               editor.chain().focus().unsetHighlight().run();
             }}
-            className="cursor-pointer flex gap-2"
+            className="cursor-pointer flex gap-2 items-center"
           >
-            <span className="p-1 border rounded-sm w-6 h-6 text-sm flex items-center justify-center border-gray-300">
+            <span className="p-1 border rounded-sm w-6 h-6 text-sm flex items-center justify-center border-gray-300 font-semibold">
               A
             </span>
             Default
@@ -96,12 +102,11 @@ const DropdownStyle: React.FC<DropdownStyleProps> = ({ editor, container }) => {
               key={`background-${idx}`}
               onClick={() => {
                 editor.commands.setHighlight({ color: value });
-                editor.chain().focus().unsetColor().run();
               }}
-              className="cursor-pointer flex gap-2"
+              className="cursor-pointer flex gap-2 items-center"
             >
               <span
-                className="p-1 border rounded-sm w-6 h-6 text-sm flex items-center justify-center border-gray-300"
+                className="p-1 border rounded-sm w-6 h-6 text-sm flex items-center justify-center border-gray-300 font-semibold"
                 style={{
                   background: value,
                 }}
