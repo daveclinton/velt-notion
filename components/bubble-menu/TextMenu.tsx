@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import { BubbleMenu, Editor } from "@tiptap/react";
-import { MessageSquarePlus } from "lucide-react";
+import { MessageSquarePlus, MoreHorizontal } from "lucide-react";
 import DropdownStyle from "../editor-components/DropdownStyle";
 import DropdownNode from "../editor-components/DropdownNode";
 import Marks from "../editor-components/Marks";
@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { NodeTypeEnum } from "../editor-components/data";
 
-const MenuBar = ({ editor }: { editor: Editor | null }) => {
+const TextMenu = ({ editor }: { editor: Editor | null }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   if (!editor) return null;
@@ -34,14 +34,24 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
   return (
     <React.Fragment>
       <BubbleMenu
-        className="text-menu-shadow z-[999999] bg-background rounded-md w-max cursor-auto"
+        className="text-menu-shadow z-[999999] bg-background rounded-md cursor-auto max-w-[95vw] overflow-hidden"
         editor={editor}
         tippyOptions={{
           popperOptions: {
-            modifiers: [{ name: "eventListeners", options: { scroll: true } }],
+            modifiers: [
+              { name: "eventListeners", options: { scroll: true } },
+              {
+                name: "preventOverflow",
+                options: {
+                  boundary: "viewport",
+                  padding: 8,
+                },
+              },
+            ],
           },
           duration: 100,
           animation: "scale-subtle",
+          maxWidth: "95vw",
         }}
         pluginKey={"TextMenu"}
         shouldShow={({ editor }) => {
@@ -73,51 +83,78 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
           return false;
         }}
       >
-        <div ref={containerRef} className="cursor-auto z-10 w-fit relative">
+        <div
+          ref={containerRef}
+          className="cursor-auto z-10 w-full relative overflow-hidden"
+        >
           {containerRef.current && (
-            <div className="flex items-center">
-              <DropdownNode container={containerRef.current} editor={editor} />
+            <div className="flex items-center overflow-x-auto scrollbar-hide">
+              {/* Primary controls - always visible */}
+              <div className="flex items-center shrink-0">
+                <DropdownNode
+                  container={containerRef.current}
+                  editor={editor}
+                />
+                <div className="bg-accent w-[1px] h-6 shrink-0 mx-1" />
+                <Marks editor={editor} />
+              </div>
 
-              <div className="bg-accent w-[1px] h-6 shrink-0" />
+              {/* Secondary controls - hidden on very small screens */}
+              <div className="hidden xs:flex items-center shrink-0">
+                <div className="bg-accent w-[1px] h-6 shrink-0 mx-1" />
+                <DropdownLinkInput
+                  container={containerRef.current}
+                  editor={editor}
+                />
+              </div>
 
-              <DropdownLinkInput
-                container={containerRef.current}
-                editor={editor}
-              />
+              {/* Tertiary controls - hidden on small screens */}
+              <div className="hidden sm:flex items-center shrink-0">
+                <div className="bg-accent w-[1px] h-6 shrink-0 mx-1" />
+                <div className="flex items-center px-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleAddCommentClick}
+                    disabled={!hasSelection}
+                    className={cn(
+                      "h-8 px-2 text-xs font-medium transition-all duration-200 whitespace-nowrap",
+                      hasSelection
+                        ? "text-foreground hover:bg-accent hover:text-accent-foreground"
+                        : "text-muted-foreground cursor-not-allowed opacity-50"
+                    )}
+                    title={
+                      hasSelection
+                        ? "Add comment to selection"
+                        : "Select text to add comment"
+                    }
+                  >
+                    <MessageSquarePlus className="h-3.5 w-3.5 mr-1.5" />
+                    <span className="hidden md:inline">Comment</span>
+                  </Button>
+                </div>
+              </div>
 
-              <div className="bg-accent w-[1px] h-6 shrink-0" />
+              {/* Style controls - hidden on mobile */}
+              <div className="hidden md:flex items-center shrink-0">
+                <div className="bg-accent w-[1px] h-6 shrink-0 mx-1" />
+                <DropdownStyle
+                  container={containerRef.current}
+                  editor={editor}
+                />
+              </div>
 
-              <Marks editor={editor} />
-
-              <div className="bg-accent w-[1px] h-6 shrink-0" />
-
-              {/* Velt Comment Button */}
-              <div className="flex items-center px-1">
+              {/* Overflow indicator for small screens */}
+              <div className="flex sm:hidden items-center shrink-0 ml-2">
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={handleAddCommentClick}
-                  disabled={!hasSelection}
-                  className={cn(
-                    "h-8 px-2 text-xs font-medium transition-all duration-200",
-                    hasSelection
-                      ? "text-foreground hover:bg-accent hover:text-accent-foreground"
-                      : "text-muted-foreground cursor-not-allowed opacity-50"
-                  )}
-                  title={
-                    hasSelection
-                      ? "Add comment to selection"
-                      : "Select text to add comment"
-                  }
+                  className="h-8 px-2 text-xs"
+                  title="More options available on larger screens"
                 >
-                  <MessageSquarePlus className="h-3.5 w-3.5 mr-1.5" />
-                  Comment
+                  <MoreHorizontal className="h-3.5 w-3.5" />
                 </Button>
               </div>
-
-              <div className="bg-accent w-[1px] h-6 shrink-0" />
-
-              <DropdownStyle container={containerRef.current} editor={editor} />
             </div>
           )}
         </div>
@@ -126,4 +163,4 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
   );
 };
 
-export default MenuBar;
+export default TextMenu;

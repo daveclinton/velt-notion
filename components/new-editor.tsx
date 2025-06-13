@@ -2,9 +2,14 @@
 
 import { useEditor, EditorContent } from "@tiptap/react";
 import { TipTapEditorExtensions } from "@/components/editor-components/extentions-editor";
-import TextMenu from "@/components/bubble-menu/TextMenu";
+import TextMenu from "./bubble-menu/TextMenu";
+import { useCommentAnnotations } from "@veltdev/react";
+import { useEffect } from "react";
+import { renderComments } from "@veltdev/tiptap-velt-comments";
 
 export default function Tiptap() {
+  const annotations = useCommentAnnotations();
+
   const editor = useEditor({
     extensions: TipTapEditorExtensions,
     immediatelyRender: false,
@@ -45,6 +50,16 @@ export default function Tiptap() {
     </blockquote>
   `,
   });
+
+  useEffect(() => {
+    if (editor && annotations?.length) {
+      const renderCommentsRequest = {
+        editor,
+        annotations,
+      };
+      renderComments(renderCommentsRequest);
+    }
+  }, [editor, annotations]);
 
   return (
     <div>

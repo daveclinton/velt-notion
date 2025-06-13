@@ -8,7 +8,9 @@ import { TiptapVeltComments } from "@veltdev/tiptap-velt-comments";
 
 export const TipTapEditorExtensions = [
   ...TiptapExtensions,
-  TiptapVeltComments,
+  TiptapVeltComments.configure({
+    persistVeltMarks: false,
+  }),
   History.configure({
     depth: 20,
   }),
