@@ -9,18 +9,17 @@ import { useParams, useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/auth-store";
 import { toast } from "sonner";
 import React from "react";
-import { useDocument, useDocumentActions } from "@/lib/document-store";
+import { useDocument } from "@/lib/document-store";
 
 const DocumentIdPage = () => {
   const params = useParams<{ documentId: string }>();
   const router = useRouter();
   const { user, isAuthenticated } = useAuthStore();
-  const { updateDocument } = useDocumentActions();
 
   const document = useDocument(params.documentId);
 
   const Editor = useMemo(
-    () => dynamic(() => import("@/components/editor"), { ssr: false }),
+    () => dynamic(() => import("@/components/new-editor"), { ssr: false }),
     []
   );
 
@@ -41,24 +40,6 @@ const DocumentIdPage = () => {
       router.push("/sign-in");
     }
   }, [isAuthenticated, document, router]);
-
-  const onChange = useCallback(
-    (content: string) => {
-      if (!params.documentId) return;
-      if (document && user && document.userId === user.id) {
-        try {
-          const updatedDoc = updateDocument(params.documentId, { content });
-          if (!updatedDoc) {
-            toast.error("Failed to update document");
-          }
-        } catch (error) {
-          console.error("Failed to update document:", error);
-          toast.error("Failed to save changes");
-        }
-      }
-    },
-    [params.documentId, document, user, updateDocument]
-  );
 
   // Show loading skeleton while document is being fetched
   if (document === undefined) {
@@ -99,9 +80,8 @@ const DocumentIdPage = () => {
       <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
         <Toolbar preview={isPreview} initialData={document} />
         <Editor
-          editable={(canEdit && !isPreview) as boolean | undefined}
-          onChange={onChange}
           initialContent={document.content}
+          onChange={() => console.log("Here")}
         />
       </div>
     </div>
