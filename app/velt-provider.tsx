@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/auth-store";
 import { useIdentify } from "@veltdev/react";
 import {
@@ -11,12 +11,25 @@ import {
 import { useTheme } from "next-themes";
 
 export function VeltWrapper({ children }: { children: ReactNode }) {
-  const { theme } = useTheme();
+  const { theme, systemTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div>{children}</div>;
+  }
+
+  const resolvedTheme = theme === "system" ? systemTheme : theme;
+  const isDark = resolvedTheme === "dark";
+
   return (
     <VeltProvider apiKey={process.env.NEXT_PUBLIC_VELT_KEY || ""}>
       <VeltAuthHandler />
-      <VeltComments textMode={false} darkMode={theme === "dark"} />
-      <VeltCommentsSidebar />
+      <VeltComments shadowDom={false} textMode={false} darkMode={isDark} />
+      <VeltCommentsSidebar darkMode={isDark} />
       {children}
     </VeltProvider>
   );
