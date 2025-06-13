@@ -6,6 +6,7 @@ import { SingleImageDropzone } from "@/components/single-image-dropzone";
 import { useState } from "react";
 import { useDocumentActions } from "@/lib/document-store";
 import { useParams } from "next/navigation";
+import { useEdgeStore } from "@/lib/edgeStore";
 import { toast } from "sonner";
 
 export const CoverImageModal = () => {
@@ -15,6 +16,7 @@ export const CoverImageModal = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { updateDocument } = useDocumentActions();
+  const { edgestore } = useEdgeStore();
 
   const onClose = () => {
     setFile(undefined);
@@ -28,18 +30,33 @@ export const CoverImageModal = () => {
       setFile(file);
 
       try {
+        const uploadOptions: any = {};
+        if (coverImage.url) {
+          uploadOptions.replaceTargetUrl = coverImage.url;
+        }
+
+        const res = await edgestore.publicFiles.upload({
+          file,
+          options: uploadOptions,
+          onProgressChange: (progress) => {
+            console.log("Upload progress:", progress);
+          },
+        });
+
         const updatedDoc = updateDocument(params.documentId as string, {
-          coverImage: coverImage.url,
+          coverImage: res.url,
         });
 
         if (!updatedDoc) {
           throw new Error("Failed to update document");
         }
 
-        toast.success("Cover image updated!");
+        toast.success("Cover image uploaded successfully!");
         onClose();
       } catch (error) {
-        toast.error("Failed to update cover image.");
+        console.error("Upload error:", error);
+        toast.error("Failed to upload cover image. Please try again.");
+      } finally {
         setIsSubmitting(false);
       }
     }
@@ -57,6 +74,11 @@ export const CoverImageModal = () => {
           value={file}
           onChange={onChange}
         />
+        {isSubmitting && (
+          <div className="text-center text-sm text-muted-foreground">
+            Uploading...
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

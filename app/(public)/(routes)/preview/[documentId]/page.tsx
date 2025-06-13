@@ -17,7 +17,6 @@ const DocumentIdPage = () => {
   const { user, isAuthenticated } = useAuthStore();
   const { updateDocument } = useDocumentActions();
 
-  // Get document from Zustand store
   const document = useDocument(params.documentId);
 
   const Editor = useMemo(
