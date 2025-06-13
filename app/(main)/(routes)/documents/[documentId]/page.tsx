@@ -15,7 +15,7 @@ const DocumentIdPage = () => {
   const { updateDocument } = useDocumentActions();
 
   const Editor = useMemo(
-    () => dynamic(() => import("@/components/editor"), { ssr: false }),
+    () => dynamic(() => import("@/components/new-editor"), { ssr: false }),
     []
   );
 
@@ -54,11 +54,7 @@ const DocumentIdPage = () => {
       <Cover url={document.coverImage} />
       <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
         <Toolbar initialData={document} />
-        <Editor
-          editable={true}
-          onChange={onChange}
-          initialContent={document.content}
-        />
+        <Editor />
       </div>
     </div>
   );
