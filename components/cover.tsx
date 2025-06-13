@@ -9,6 +9,7 @@ import { useDocumentActions } from "@/lib/document-store";
 import { useParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { useEdgeStore } from "@/lib/edgeStore";
 
 interface CoverImageProps {
   url?: string;
@@ -19,10 +20,14 @@ export const Cover = ({ url, preview }: CoverImageProps) => {
   const params = useParams();
   const coverImage = useCoverImage();
   const { updateDocument } = useDocumentActions();
+  const { edgestore } = useEdgeStore();
 
   const onRemove = async () => {
     if (url) {
       try {
+        await edgestore.publicFiles.delete({
+          url: url,
+        });
         const updatedDoc = updateDocument(params.documentId as string, {
           coverImage: undefined,
         });
