@@ -10,7 +10,10 @@ import { TextSelection } from "prosemirror-state";
 import "tippy.js/animations/scale-subtle.css";
 
 import DropdownLinkInput from "../editor-components/DropdownLinkInput";
-import { addComment } from "@veltdev/tiptap-velt-comments";
+import {
+  TiptapVeltCommentConfig,
+  triggerAddComment,
+} from "@veltdev/tiptap-velt-comments";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -23,10 +26,8 @@ const TextMenu = ({ editor }: { editor: Editor | null }) => {
 
   const handleAddCommentClick = () => {
     if (editor && editor.state.selection && !editor.state.selection.empty) {
-      const addCommentRequest = {
-        editor,
-      };
-      addComment(addCommentRequest);
+      const config: TiptapVeltCommentConfig = {};
+      triggerAddComment(editor, config);
     }
   };
   const hasSelection = editor.state.selection && !editor.state.selection.empty;

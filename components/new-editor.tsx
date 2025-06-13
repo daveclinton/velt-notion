@@ -1,11 +1,10 @@
 "use client";
-
 import { useEditor, EditorContent } from "@tiptap/react";
 import { TipTapEditorExtensions } from "@/components/editor-components/extentions-editor";
 import TextMenu from "./bubble-menu/TextMenu";
 import { useCommentAnnotations } from "@veltdev/react";
 import { useEffect } from "react";
-import { renderComments } from "@veltdev/tiptap-velt-comments";
+import { highlightComments } from "@veltdev/tiptap-velt-comments";
 
 export default function Tiptap() {
   const annotations = useCommentAnnotations();
@@ -50,17 +49,15 @@ export default function Tiptap() {
     </blockquote>
   `,
   });
-
   useEffect(() => {
-    if (editor && annotations?.length) {
-      const renderCommentsRequest = {
-        editor,
-        annotations,
-      };
-      renderComments(renderCommentsRequest);
+    if (editor && annotations && annotations.length > 0) {
+      try {
+        highlightComments(editor, annotations);
+      } catch (error) {
+        console.error("Error highlighting comments:", error);
+      }
     }
   }, [editor, annotations]);
-
   return (
     <div>
       <TextMenu editor={editor} />
