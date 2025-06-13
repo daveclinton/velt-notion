@@ -83,16 +83,3 @@ body,
     @apply bg-background text-foreground;
   }
 }
-
-.tiptap {
-  outline: none;
-}
-
-.tiptap:focus {
-  border: none;
-}
-
-.tiptap p {
-  margin: 0 3.4em;
-  color: rgb(var(--tiptap-foreground));
-}

@@ -8,6 +8,7 @@ import { Publish } from "./publish";
 import { useDocument } from "@/lib/document-store";
 import { VeltPresence, VeltSidebarButton } from "@veltdev/react";
 import { Banner } from "./banner";
+import { ModeToggle } from "@/components/mode-toggle";
 
 interface NavbarProps {
   isCollapsed: boolean;
@@ -55,6 +56,7 @@ export const Navbar = ({ isCollapsed, onResetWidth }: NavbarProps) => {
               <VeltSidebarButton />
             </div>
             <Publish initialData={document} />
+            <ModeToggle />
             <Menu documentId={document.id} />
           </div>
         </div>
