@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 
 import { generateHTML } from "@tiptap/html";
 import { JSONContent } from "@tiptap/react";
-import { TiptapExtensions } from "../lib/extensions";
 import { useMemo } from "react";
-import { TipTapPreviewViewer } from "../lib/utils";
-import { TipTapEditorProps } from "../lib/props";
+import { TiptapExtensions } from "./extensions";
+import { TipTapPreviewViewer } from "@/lib/utils";
 
 interface OutputProos {
   editorJson: JSONContent;

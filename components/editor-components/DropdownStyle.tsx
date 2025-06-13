@@ -1,6 +1,6 @@
 import { Editor } from "@tiptap/react";
 import { CaretSortIcon } from "@radix-ui/react-icons";
-import { colors } from "../lib/data";
+
 import { RefObject } from "react";
 import {
   DropdownMenu,
@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { colors } from "./data";
 
 interface DropdownStyleProps {
   editor: Editor;

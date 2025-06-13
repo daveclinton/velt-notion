@@ -1,6 +1,5 @@
 import { RefObject, useState } from "react";
 import { type Editor } from "@tiptap/core";
-import { preventBubbling } from "@/lib/utils";
 import {
   ArrowTopRightIcon,
   CheckIcon,
@@ -12,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { preventBubbling } from "@/lib/utils";
 
 interface DropdownLinkInputProps {
   editor: Editor;

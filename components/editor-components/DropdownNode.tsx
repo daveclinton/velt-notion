@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 
 import { Editor } from "@tiptap/react";
 import { RefObject } from "react";
-import { NodeType, NodeTypeEnum, nodes, EnumNodesTypeLabel } from "../lib/data";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import {
   DropdownMenu,
@@ -12,6 +10,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { EnumNodesTypeLabel, nodes, NodeType, NodeTypeEnum } from "./data";
 
 interface SelectNodeProps {
   editor: Editor;
@@ -104,7 +103,7 @@ const DropdownNode: React.FC<SelectNodeProps> = ({ editor, container }) => {
           <CaretSortIcon className="h-4 w-4 opacity-50 text-primary" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="z-[9999]" container={container}>
+      <DropdownMenuContent className="z-[9999]" container={container as any}>
         <DropdownMenuLabel className="text-xxs font-normal py-1">
           Turn into
         </DropdownMenuLabel>

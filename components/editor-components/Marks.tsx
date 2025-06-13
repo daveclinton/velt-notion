@@ -1,6 +1,6 @@
 import React from "react";
-import { marks } from "../lib/data";
 import { Editor } from "@tiptap/react";
+import { marks } from "./data";
 
 interface MarksProps {
   editor: Editor;

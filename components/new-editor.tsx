@@ -1,11 +1,13 @@
 "use client";
 
 import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
+import { TipTapEditorExtensions } from "@/components/editor-components/extentions-editor";
+import TextMenu from "@/components/bubble-menu/TextMenu";
 
-const Tiptap = () => {
+export default function Tiptap() {
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: TipTapEditorExtensions,
+    immediatelyRender: false,
     editorProps: {
       attributes: {
         class:
@@ -44,7 +46,10 @@ const Tiptap = () => {
   `,
   });
 
-  return <EditorContent editor={editor} />;
-};
-
-export default Tiptap;
+  return (
+    <div>
+      <TextMenu editor={editor} />
+      <EditorContent editor={editor} />
+    </div>
+  );
+}
