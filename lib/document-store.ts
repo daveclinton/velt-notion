@@ -105,7 +105,7 @@ export const useDocumentStore = create<DocumentState>()(
           throw new Error("User ID is required");
         }
 
-        const { documents, getDocumentById } = get();
+        const { getDocumentById } = get();
 
         if (parentDocumentId) {
           const parent = getDocumentById(parentDocumentId);
@@ -113,10 +113,11 @@ export const useDocumentStore = create<DocumentState>()(
             return null;
           }
         }
-
         const newDoc: Document = {
           id: `doc_${Math.random().toString(36).slice(2)}`,
-          title: title || "Untitled",
+          title:
+            title ||
+            "How Trumpet Used Collaborative Features from Velt SDK to Increase Their Engagement",
           content: "",
           userId,
           isPublished: false,
@@ -125,6 +126,8 @@ export const useDocumentStore = create<DocumentState>()(
           updatedAt: new Date().toISOString(),
           parentDocumentId,
           icon: "📄",
+          coverImage:
+            "https://files.edgestore.dev/r398wokexldr75py/publicFiles/_public/c0cb79d1-6354-441a-bb3d-8a088fc0a782.png",
         };
 
         set((state) => ({

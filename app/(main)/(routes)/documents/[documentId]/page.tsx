@@ -8,11 +8,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useParams } from "next/navigation";
 import { useDocument, useDocumentActions } from "@/lib/document-store";
 import { useSetDocument } from "@veltdev/react";
+import { useCoverImage } from "@/hooks/use-cover-image";
 
 const DocumentIdPage = () => {
   const params = useParams<{ documentId: string }>();
   const document = useDocument(params.documentId);
   const { updateDocument } = useDocumentActions();
+  const { url } = useCoverImage();
 
   const Editor = useMemo(
     () => dynamic(() => import("@/components/new-editor"), { ssr: false }),

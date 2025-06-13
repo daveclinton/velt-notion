@@ -5,6 +5,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ModalProvider } from "@/components/providers/modal-providers";
 import { VeltWrapper } from "./velt-provider";
+import { EdgeStoreProvider } from "@/lib/edgeStore";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -34,19 +35,21 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-          storageKey="notion-theme-2"
-        >
-          <VeltWrapper>
-            <Toaster position="top-center" />
-            <ModalProvider />
-            {children}
-          </VeltWrapper>
-        </ThemeProvider>
+        <EdgeStoreProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+            storageKey="notion-theme-2"
+          >
+            <VeltWrapper>
+              <Toaster position="top-center" />
+              <ModalProvider />
+              {children}
+            </VeltWrapper>
+          </ThemeProvider>
+        </EdgeStoreProvider>
       </body>
     </html>
   );
