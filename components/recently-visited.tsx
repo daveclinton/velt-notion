@@ -42,39 +42,71 @@ export default function RecentlyVisited() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="flex items-center gap-2 mb-6">
-        <Clock className="w-5 h-5 text-muted-foreground" />
-        <h2 className="text-muted-foreground text-lg font-medium">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex items-center gap-2 mb-4 sm:mb-6">
+        <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
+        <h2 className="text-muted-foreground text-base sm:text-lg font-medium">
           Recently visited
         </h2>
       </div>
 
-      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-        {recentDocuments.map((doc) => (
-          <DocumentCard
-            key={doc.id}
-            id={doc.id}
-            title={doc.title}
-            icon={doc.icon}
-            coverImage={doc.coverImage}
-          />
-        ))}
+      {/* Mobile: Horizontal scroll */}
+      <div className="sm:hidden">
+        <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4">
+          {recentDocuments.map((doc) => (
+            <DocumentCard
+              key={doc.id}
+              id={doc.id}
+              title={doc.title}
+              icon={doc.icon}
+              coverImage={doc.coverImage}
+              isMobile
+            />
+          ))}
 
-        {/* Add New Card */}
-        <Card
-          className="flex-shrink-0 w-64 h-40 bg-card border-border hover:bg-accent transition-colors cursor-pointer group"
-          onClick={handleCreateNew}
-        >
-          <div className="h-full flex flex-col items-center justify-center p-6">
-            <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center mb-3 group-hover:bg-muted/80 transition-colors">
-              <Plus className="w-6 h-6 text-muted-foreground" />
+          <Card
+            className="flex-shrink-0 w-48 h-32 bg-card border-border hover:bg-accent transition-colors cursor-pointer group"
+            onClick={handleCreateNew}
+          >
+            <div className="h-full flex flex-col items-center justify-center p-4">
+              <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center mb-2 group-hover:bg-muted/80 transition-colors">
+                <Plus className="w-4 h-4 text-muted-foreground" />
+              </div>
+              <span className="text-foreground font-medium text-center text-sm">
+                {isCreating ? "Creating..." : "New"}
+              </span>
             </div>
-            <span className="text-foreground font-medium text-center">
-              {isCreating ? "Creating..." : "New"}
-            </span>
-          </div>
-        </Card>
+          </Card>
+        </div>
+      </div>
+
+      {/* Tablet and Desktop: Grid layout */}
+      <div className="hidden sm:block">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          {recentDocuments.map((doc) => (
+            <DocumentCard
+              key={doc.id}
+              id={doc.id}
+              title={doc.title}
+              icon={doc.icon}
+              coverImage={doc.coverImage}
+            />
+          ))}
+
+          <Card
+            className="w-full h-40 bg-card border-border hover:bg-accent transition-colors cursor-pointer group"
+            onClick={handleCreateNew}
+          >
+            <div className="h-full flex flex-col items-center justify-center p-6">
+              <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center mb-3 group-hover:bg-muted/80 transition-colors">
+                <Plus className="w-6 h-6 text-muted-foreground" />
+              </div>
+              <span className="text-foreground font-medium text-center">
+                {isCreating ? "Creating..." : "New"}
+              </span>
+            </div>
+          </Card>
+        </div>
       </div>
     </div>
   );
@@ -85,12 +117,23 @@ interface DocumentCardProps {
   icon?: string;
   coverImage?: string;
   id: string;
+  isMobile?: boolean;
 }
 
-function DocumentCard({ title, icon, coverImage, id }: DocumentCardProps) {
+function DocumentCard({
+  title,
+  icon,
+  coverImage,
+  id,
+  isMobile = false,
+}: DocumentCardProps) {
+  const cardClasses = isMobile
+    ? "flex-shrink-0 w-48 h-32 bg-card border-border hover:bg-accent transition-colors cursor-pointer overflow-hidden group"
+    : "w-full h-40 bg-card border-border hover:bg-accent transition-colors cursor-pointer overflow-hidden group";
+
   return (
     <Link href={`/documents/${id}`}>
-      <Card className="flex-shrink-0 w-64 h-40 bg-card border-border hover:bg-accent transition-colors cursor-pointer overflow-hidden group">
+      <Card className={cardClasses}>
         <div className="h-full flex flex-col">
           {/* Cover Image Section */}
           <div className="flex-1 relative bg-muted">
@@ -101,29 +144,49 @@ function DocumentCard({ title, icon, coverImage, id }: DocumentCardProps) {
                   alt={title}
                   fill
                   className="object-cover"
-                  sizes="256px"
+                  sizes={
+                    isMobile
+                      ? "192px"
+                      : "(max-width: 640px) 192px, (max-width: 768px) 256px, (max-width: 1024px) 192px, 160px"
+                  }
                   crossOrigin="anonymous"
                 />
                 {icon && (
-                  <div className="absolute top-2 left-2 w-8 h-8 bg-background/50 backdrop-blur-sm rounded-full flex items-center justify-center">
-                    <span className="text-lg">{icon}</span>
+                  <div
+                    className={`absolute top-2 left-2 ${
+                      isMobile ? "w-6 h-6" : "w-8 h-8"
+                    } bg-background/50 backdrop-blur-sm rounded-full flex items-center justify-center`}
+                  >
+                    <span className={isMobile ? "text-sm" : "text-lg"}>
+                      {icon}
+                    </span>
                   </div>
                 )}
               </div>
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 {icon ? (
-                  <span className="text-3xl">{icon}</span>
+                  <span className={isMobile ? "text-xl" : "text-3xl"}>
+                    {icon}
+                  </span>
                 ) : (
-                  <FileText className="w-8 h-8 text-muted-foreground" />
+                  <FileText
+                    className={`${
+                      isMobile ? "w-6 h-6" : "w-8 h-8"
+                    } text-muted-foreground`}
+                  />
                 )}
               </div>
             )}
           </div>
 
           {/* Title Section */}
-          <div className="p-4 bg-card">
-            <h3 className="text-foreground font-medium text-sm leading-tight line-clamp-2">
+          <div className={`bg-card ${isMobile ? "p-3" : "p-4"}`}>
+            <h3
+              className={`text-foreground font-medium leading-tight line-clamp-2 ${
+                isMobile ? "text-xs" : "text-sm"
+              }`}
+            >
               {title}
             </h3>
           </div>
