@@ -3,7 +3,7 @@
 import { Card } from "@/components/ui/card";
 import { useDocumentStore, useDocumentActions } from "@/lib/document-store";
 import { useAuthStore } from "@/lib/auth-store";
-import { Clock, FileText, Plus } from "lucide-react";
+import { FileText, PanelTopCloseIcon, Plus } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -44,9 +44,9 @@ export default function RecentlyVisited() {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex items-center gap-2 mb-4 sm:mb-6">
-        <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
+        <PanelTopCloseIcon className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
         <h2 className="text-muted-foreground text-base sm:text-lg font-medium">
-          Recently visited
+          Public Documents
         </h2>
       </div>
 
