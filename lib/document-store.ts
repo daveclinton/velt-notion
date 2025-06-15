@@ -127,7 +127,7 @@ export const useDocumentStore = create<DocumentState>()(
           parentDocumentId,
           icon: "📄",
           coverImage:
-            "https://files.edgestore.dev/r398wokexldr75py/publicFiles/_public/c0cb79d1-6354-441a-bb3d-8a088fc0a782.png",
+            "https://files.edgestore.dev/r398wokexldr75py/publicFiles/_public/95cbdb97-ade1-4b68-8580-f042f1d4ce65.png",
         };
 
         set((state) => ({
