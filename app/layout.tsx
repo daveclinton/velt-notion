@@ -3,8 +3,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { ModalProvider } from "@/components/providers/modal-providers";
-import { VeltWrapper } from "./velt-provider";
 import { EdgeStoreProvider } from "@/lib/edgeStore";
 const inter = Inter({ subsets: ["latin"] });
 
@@ -43,11 +41,8 @@ export default function RootLayout({
             disableTransitionOnChange
             storageKey="notion-theme-2"
           >
-            <VeltWrapper>
-              <Toaster position="top-center" />
-              <ModalProvider />
-              {children}
-            </VeltWrapper>
+            <Toaster position="top-center" />
+            {children}
           </ThemeProvider>
         </EdgeStoreProvider>
       </body>
