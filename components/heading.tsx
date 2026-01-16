@@ -2,7 +2,6 @@
 
 import { Spinner } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
-import { getCurrentUser } from "@/lib/auth";
 import { useAuthStore } from "@/lib/auth-store";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";

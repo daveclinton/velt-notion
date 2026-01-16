@@ -2,7 +2,6 @@
 
 import { useScrollTop } from "@/hooks/use-scroll-top";
 import { cn } from "@/lib/utils";
-import { Logo } from "./logo";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -45,9 +44,7 @@ const Navbar = () => {
         scrolled && "border-b shadow-sm"
       )}
     >
-      {/* Logo */}
-      <Logo />
-
+      Notion Clone
       {/* Desktop Navigation */}
       <div className="hidden md:flex md:ml-auto items-center gap-x-2">
         {!isAuthenticated && (
@@ -89,7 +86,6 @@ const Navbar = () => {
         )}
         <ModeToggle />
       </div>
-
       {/* Mobile Navigation */}
       <div className="md:hidden ml-auto flex items-center gap-2">
         <ModeToggle />
